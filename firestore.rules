@@ -1,0 +1,163 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'jacky.rakotomalala23@gmail.com' ||
+        request.auth.token.email == 'rakotomalalajacky09@gmail.com'
+      );
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Admins collection
+    match /admins/{adminUid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Users public profile
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+
+      // Private PII subcollection strictly restricted to owner or admin
+      match /private/{docId} {
+        allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      }
+    }
+
+    // Donations
+    match /donations/{donationId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().ownerUid == request.auth.uid;
+      allow update: if isSignedIn() && (
+        isAdmin() ||
+        resource.data.ownerUid == request.auth.uid ||
+        resource.data.reservedForUid == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewsCount', 'uniqueInterestsCount', 'conversationsCount', 'status', 'reservedForUid', 'reservedForName'])
+      );
+      allow delete: if isSignedIn() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+    }
+
+    // Donation Interests tracking
+    match /donationInterests/{interestId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && incoming().viewerUid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Conversations
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.donorUid ||
+        request.auth.uid == resource.data.beneficiaryUid ||
+        (resource.data.participantUids is list && resource.data.participantUids.hasAny([request.auth.uid])) ||
+        isAdmin()
+      );
+      allow create: if isSignedIn() && (
+        request.auth.uid == incoming().donorUid ||
+        request.auth.uid == incoming().beneficiaryUid ||
+        (incoming().participantUids is list && incoming().participantUids.hasAny([request.auth.uid])) ||
+        isAdmin()
+      );
+      allow update: if isSignedIn() && (
+        request.auth.uid == resource.data.donorUid ||
+        request.auth.uid == resource.data.beneficiaryUid ||
+        (resource.data.participantUids is list && resource.data.participantUids.hasAny([request.auth.uid])) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+
+      // Nested messages in conversation
+      match /messages/{messageId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // Reservations
+    match /reservations/{reservationId} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.donorUid || 
+        request.auth.uid == resource.data.beneficiaryUid || 
+        isAdmin()
+      );
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        request.auth.uid == resource.data.donorUid || 
+        request.auth.uid == resource.data.beneficiaryUid || 
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+
+    // Loyalty Transactions (Immutable ledger)
+    match /loyaltyTransactions/{transactionId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // Coupons
+    match /coupons/{couponId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // Partners
+    match /partners/{partnerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Moderation Reports
+    match /moderationReports/{reportId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // Audit logs
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+  }
+}

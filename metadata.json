@@ -1,0 +1,8 @@
+{
+  "name": "Remix Zarazarao",
+  "description": "Plateforme communautaire de dons gratuits adaptée à Madagascar et en Afrique. Partageons plus, gaspillons moins, entraidons-nous.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

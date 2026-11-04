@@ -1,0 +1,292 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile representation on Zarazarao",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "city": { "type": "string" },
+        "fokontany": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "partner", "admin"] },
+        "applesCount": { "type": "number" },
+        "profileCompletionStatus": { "type": "boolean" },
+        "signupBonusAwarded": { "type": "boolean" },
+        "firstDonationBonusAwarded": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "city", "createdAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Private PII strictly isolated for user",
+      "type": "object",
+      "properties": {
+        "phoneNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "verifiedPhoneStatus": { "type": "boolean" },
+        "verifiedEmailStatus": { "type": "boolean" }
+      }
+    },
+    "Donation": {
+      "title": "Donation",
+      "description": "A free donation item published on Zarazarao",
+      "type": "object",
+      "properties": {
+        "donationId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "ownerDisplayName": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "conditionScore": { "type": "number" },
+        "imageUrls": { "type": "array" },
+        "primaryImageUrl": { "type": "string" },
+        "city": { "type": "string" },
+        "fokontany": { "type": "string" },
+        "handoverMode": { "type": "string", "enum": ["pickup", "delivery", "discuss"] },
+        "specialInstructions": { "type": "string" },
+        "status": { "type": "string", "enum": ["DISPONIBLE", "RESERVE", "RECUPERE", "INDISPONIBLE", "ARCHIVE"] },
+        "viewsCount": { "type": "number" },
+        "uniqueInterestsCount": { "type": "number" },
+        "conversationsCount": { "type": "number" },
+        "reservedForUid": { "type": "string" },
+        "reservedForName": { "type": "string" },
+        "reservedAt": { "type": "string", "format": "date-time" },
+        "recoveredAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donationId", "ownerUid", "title", "description", "category", "city", "fokontany", "status", "createdAt"]
+    },
+    "DonationInterest": {
+      "title": "DonationInterest",
+      "description": "Tracks unique user clicks and interest events",
+      "type": "object",
+      "properties": {
+        "interestId": { "type": "string" },
+        "donationId": { "type": "string" },
+        "viewerUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["interestId", "donationId", "viewerUid", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct conversation between donor and beneficiary regarding a donation",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "donationId": { "type": "string" },
+        "donationTitle": { "type": "string" },
+        "donationImage": { "type": "string" },
+        "donorUid": { "type": "string" },
+        "beneficiaryUid": { "type": "string" },
+        "participantUids": { "type": "array" },
+        "status": { "type": "string", "enum": ["ACTIVE", "ARCHIVED", "CLOSED"] },
+        "lastMessagePreview": { "type": "string" },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "donationId", "donorUid", "beneficiaryUid", "participantUids", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A chat message or system audit event inside a conversation",
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string" },
+        "conversationId": { "type": "string" },
+        "senderUid": { "type": "string" },
+        "senderName": { "type": "string" },
+        "text": { "type": "string" },
+        "mediaUrls": { "type": "array" },
+        "systemEventType": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["messageId", "senderUid", "createdAt"]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Formal state reservation for a donation",
+      "type": "object",
+      "properties": {
+        "reservationId": { "type": "string" },
+        "donationId": { "type": "string" },
+        "donationTitle": { "type": "string" },
+        "donorUid": { "type": "string" },
+        "beneficiaryUid": { "type": "string" },
+        "conversationId": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIVE", "CANCELLED", "CONFIRMED"] },
+        "cancellationReason": { "type": "string" },
+        "cancellationActorUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "recoveredAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reservationId", "donationId", "donorUid", "beneficiaryUid", "status", "createdAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app notifications for users",
+      "type": "object",
+      "properties": {
+        "notificationId": { "type": "string" },
+        "recipientUid": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "resourceType": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["notificationId", "recipientUid", "title", "body", "isRead", "createdAt"]
+    },
+    "LoyaltyTransaction": {
+      "title": "LoyaltyTransaction",
+      "description": "Immutable ledger record for loyalty apples transactions",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string" },
+        "uid": { "type": "string" },
+        "type": { "type": "string", "enum": ["SIGNUP_BONUS", "PROFILE_BONUS", "FIRST_DONATION_BONUS", "RANDOM_DONATION_REWARD", "CONVERT_TO_COUPON", "ADMIN_ADJUSTMENT"] },
+        "pointsDelta": { "type": "number" },
+        "sourceType": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "note": { "type": "string" }
+      },
+      "required": ["transactionId", "uid", "type", "pointsDelta", "createdAt"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Store discount coupon converted from loyalty apples",
+      "type": "object",
+      "properties": {
+        "couponId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "partnerId": { "type": "string" },
+        "partnerName": { "type": "string" },
+        "pointsConverted": { "type": "number" },
+        "faceValueAr": { "type": "number" },
+        "eightDigitCode": { "type": "string" },
+        "barcodePayload": { "type": "string" },
+        "status": { "type": "string", "enum": ["CREE", "ACTIF", "AFFECTE_A_UNE_ENSEIGNE", "UTILISE", "EXPIRE", "ANNULE"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "usedAt": { "type": "string", "format": "date-time" },
+        "usedByPartnerUid": { "type": "string" },
+        "usedInStoreName": { "type": "string" }
+      },
+      "required": ["couponId", "ownerUid", "pointsConverted", "faceValueAr", "eightDigitCode", "status", "createdAt"]
+    },
+    "Partner": {
+      "title": "Partner",
+      "description": "Partner merchant accepting Zarazarao loyalty coupons in Madagascar",
+      "type": "object",
+      "properties": {
+        "partnerId": { "type": "string" },
+        "name": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "city": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIF", "EN_ATTENTE"] },
+        "terms": { "type": "string" },
+        "minCouponValueAr": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["partnerId", "name", "city", "status", "createdAt"]
+    },
+    "ModerationReport": {
+      "title": "ModerationReport",
+      "description": "Community moderation report for donations, users or messages",
+      "type": "object",
+      "properties": {
+        "reportId": { "type": "string" },
+        "reporterUid": { "type": "string" },
+        "reportedType": { "type": "string" },
+        "reportedId": { "type": "string" },
+        "reason": { "type": "string" },
+        "details": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reportId", "reporterUid", "reportedType", "reportedId", "reason", "createdAt"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Super administrator authorization document",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Public and general user profile records"
+    },
+    "/users/{userId}/private/info": {
+      "schema": "UserPrivateInfo",
+      "description": "Private PII accessible only by the user"
+    },
+    "/donations/{donationId}": {
+      "schema": "Donation",
+      "description": "Free community donations published by members"
+    },
+    "/donationInterests/{interestId}": {
+      "schema": "DonationInterest",
+      "description": "Tracks unique clicks and interest signals"
+    },
+    "/conversations/{conversationId}": {
+      "schema": "Conversation",
+      "description": "Direct conversation records for donation negotiation"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Messages and backend system reservation events"
+    },
+    "/reservations/{reservationId}": {
+      "schema": "Reservation",
+      "description": "Official reservation documents"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "In-app notifications for users"
+    },
+    "/loyaltyTransactions/{transactionId}": {
+      "schema": "LoyaltyTransaction",
+      "description": "Audited loyalty point transactions ledger"
+    },
+    "/coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Redeemable partner coupons"
+    },
+    "/partners/{partnerId}": {
+      "schema": "Partner",
+      "description": "Registered partner merchant stores"
+    },
+    "/moderationReports/{reportId}": {
+      "schema": "ModerationReport",
+      "description": "Community moderation reports"
+    },
+    "/admins/{adminUid}": {
+      "schema": "Admin",
+      "description": "Protected administrator whitelist"
+    }
+  }
+}

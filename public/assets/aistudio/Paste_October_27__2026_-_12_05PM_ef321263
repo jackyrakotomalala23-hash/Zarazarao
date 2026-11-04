@@ -1,0 +1,2421 @@
+# PROJET : ZARAZARAO
+## Plateforme communautaire de dons gratuits adaptée à Madagascar, avec ambition panafricaine
+
+Tu es une équipe complète composée de :
+- Un architecte logiciel senior spécialisé dans Firebase et les applications cloud.
+- Un développeur frontend expert en React, TypeScript et interfaces modernes.
+- Un développeur backend expert en Firebase, Firestore et Cloud Functions.
+- Un expert en cybersécurité applicative.
+- Un UX/UI designer spécialisé dans les plateformes communautaires.
+- Un spécialiste des systèmes de messagerie temps réel.
+- Un spécialiste des systèmes de fidélité, des coupons numériques et de la prévention de la fraude.
+- Un expert en visualisation de données, cartographie et tableaux de bord analytiques.
+
+Ta mission est de CONCEVOIR, DÉVELOPPER ET FAIRE FONCTIONNER une application web complète nommée ZARAZARAO.
+
+Il ne s'agit pas de créer une simple landing page, une maquette visuelle, un prototype avec des boutons inactifs ou un dashboard rempli de données fictives.
+
+Il s'agit de construire une véritable plateforme fonctionnelle, sécurisée, responsive, évolutive et prête à être testée par de vrais utilisateurs.
+
+Lorsque les services Firebase nécessaires sont disponibles, configure-les et intègre-les réellement. Si une configuration externe nécessite des clés API, des identifiants ou une action manuelle, crée l'intégration correspondante, documente précisément les étapes nécessaires et ne simule jamais une fonctionnalité opérationnelle.
+
+Ne prétends jamais qu'une fonctionnalité est terminée si elle n'est que visuelle.
+
+---
+
+# 1. VISION ET IDENTITÉ DU PROJET
+
+Nom : Zarazarao.
+
+Signification et philosophie : le partage, la générosité, l'entraide et la solidarité.
+
+Positionnement : une plateforme communautaire gratuite permettant aux habitants de Madagascar de donner des objets dont ils n'ont plus besoin et de récupérer gratuitement des objets proposés par d'autres personnes.
+
+Le concept s'inspire du fonctionnement général des plateformes de dons entre particuliers, notamment Donnons.org, mais doit posséder sa propre identité visuelle, sa propre architecture et ses propres fonctionnalités.
+
+Ne copie pas le design, les textes ou les éléments de marque propriétaires d'une autre plateforme.
+
+## Mission principale
+
+Encourager une économie du partage en permettant aux objets inutilisés de retrouver une utilité auprès de personnes qui en ont besoin.
+
+## Principes fondamentaux
+
+1. Donner est gratuit.
+2. Recevoir un don est gratuit.
+3. Aucun prix de vente ne peut être demandé pour un objet publié.
+4. Aucun paiement entre donateur et bénéficiaire ne doit exister.
+5. Les pommes récompensent la participation à la communauté.
+6. Les coupons sont des récompenses de fidélité utilisables uniquement auprès des enseignes partenaires autorisées.
+7. La plateforme doit favoriser la confiance, la transparence, la sécurité et la simplicité.
+8. L'expérience doit être adaptée aux usages, à la connectivité et aux réalités de Madagascar.
+9. L'architecture doit permettre une expansion future dans d'autres pays africains.
+
+La devise de la plateforme est :
+
+« Un objet dont tu n'as plus besoin peut changer la vie de quelqu'un. »
+
+Le message central est :
+
+« Partageons plus. Gaspillons moins. Aidons-nous davantage. »
+
+---
+
+# 2. ARCHITECTURE TECHNIQUE OBLIGATOIRE
+
+Construis l'application avec une architecture moderne, maintenable et adaptée à Firebase.
+
+## Frontend
+
+Utilise :
+- React.
+- TypeScript.
+- Vite si l'environnement de génération le permet.
+- Tailwind CSS.
+- Une bibliothèque de composants accessible et moderne, telle que shadcn/ui si compatible.
+- Lucide pour les icônes.
+- React Router pour le routage.
+- Recharts pour les graphiques.
+- React Hook Form pour les formulaires.
+- Zod pour la validation des données.
+- Une bibliothèque de cartographie compatible avec l'environnement, de préférence Leaflet avec OpenStreetMap si les conditions d'utilisation le permettent.
+
+Privilégie une architecture modulaire, des composants réutilisables, des hooks dédiés et une séparation claire entre interface, services et logique métier.
+
+Utilise les versions stables et compatibles des dépendances disponibles dans l'environnement.
+
+## Backend Firebase
+
+Utilise les services suivants lorsqu'ils sont disponibles :
+
+1. Firebase Authentication.
+2. Cloud Firestore.
+3. Cloud Storage for Firebase.
+4. Cloud Functions for Firebase.
+5. Firebase App Check.
+6. Firebase Cloud Messaging.
+7. Firebase Hosting ou le service de déploiement compatible.
+8. Firebase Analytics, avec une collecte respectueuse de la vie privée.
+
+Utilise les Cloud Functions de deuxième génération lorsque cela est pertinent et compatible.
+
+Utilise les transactions Firestore et les mécanismes d'idempotence pour toutes les opérations critiques.
+
+Les opérations sensibles doivent être exécutées côté serveur.
+
+Ne fais jamais confiance aux données sensibles envoyées directement par le navigateur.
+
+## Architecture attendue
+
+Organise le projet avec une structure similaire à :
+
+src/
+  app/
+  components/
+    ui/
+    layout/
+    navigation/
+    donations/
+    messaging/
+    dashboards/
+    maps/
+    loyalty/
+    coupons/
+  pages/
+  routes/
+  hooks/
+  services/
+    firebase/
+    auth/
+    users/
+    donations/
+    reservations/
+    messaging/
+    notifications/
+    loyalty/
+    coupons/
+    analytics/
+    moderation/
+  contexts/
+  schemas/
+  types/
+  utils/
+  config/
+
+functions/
+  src/
+    auth/
+    users/
+    donations/
+    reservations/
+    messaging/
+    loyalty/
+    coupons/
+    notifications/
+    moderation/
+    analytics/
+    scheduled/
+
+Ne conserve pas toute la logique dans un seul fichier.
+
+Ajoute un fichier README.md contenant les instructions d'installation, de configuration Firebase, de lancement local, de tests et de déploiement.
+
+---
+
+# 3. IDENTITÉ VISUELLE ET EXPÉRIENCE UTILISATEUR
+
+Je veux une plateforme visuellement remarquable, professionnelle, moderne et chaleureuse.
+
+Elle doit donner envie de partager et inspirer confiance.
+
+## Direction artistique
+
+Créer une identité graphique originale autour de la générosité et du partage.
+
+Palette suggérée :
+- Vert principal : #237A52.
+- Vert secondaire : #4DAA76.
+- Fond général : #F7F9F6.
+- Blanc : #FFFFFF.
+- Texte principal : #202923.
+- Texte secondaire : #69756D.
+- Accent chaleureux : #F2C94C.
+- Rouge réservé aux erreurs et alertes critiques.
+
+Utilise ces couleurs comme point de départ et assure une cohérence visuelle sur toutes les pages.
+
+## Principes UX/UI
+
+- Design responsive mobile-first.
+- Interface fluide.
+- Navigation intuitive.
+- Espacement équilibré.
+- Typographie lisible.
+- Cartes avec coins arrondis modérés.
+- Ombres légères.
+- Icônes cohérentes.
+- Animations discrètes.
+- Transitions rapides.
+- États de chargement élégants.
+- Messages de confirmation clairs.
+- Notifications visuelles non intrusives.
+- Modales soignées.
+- Pages vides accompagnées d'explications et d'actions utiles.
+- Gestion complète des erreurs.
+- Accessibilité au clavier.
+- Contrastes conformes aux bonnes pratiques WCAG.
+- Aucun élément décoratif excessif.
+- Aucune accumulation inutile de cartes ou de graphiques.
+
+Ne transforme pas chaque élément en carte flottante.
+
+L'interface doit être équilibrée et adaptée à une plateforme communautaire.
+
+## Responsive
+
+Sur ordinateur :
+- Barre de navigation complète.
+- Grilles de publications.
+- Tableaux de bord détaillés.
+- Messagerie avec liste des conversations et panneau de discussion.
+
+Sur mobile :
+- Navigation compacte.
+- Menu mobile accessible.
+- Cartes de dons adaptées aux petits écrans.
+- Messagerie plein écran.
+- Boutons tactiles suffisamment grands.
+- Formulaires découpés en étapes lorsque nécessaire.
+- Téléversement de photos depuis la galerie ou l'appareil photo.
+
+Prévois les états desktop, tablette et mobile pour toutes les pages.
+
+---
+
+# 4. STRUCTURE GÉNÉRALE DE LA PLATEFORME
+
+Crée les pages suivantes.
+
+## Pages publiques
+
+1. Accueil.
+2. Explorer les dons.
+3. Détail d'une publication.
+4. Catégories.
+5. Classement des meilleurs donateurs.
+6. Statistiques communautaires.
+7. Carte du partage à Madagascar.
+8. Fonctionnement de Zarazarao.
+9. Règles de la communauté.
+10. Centre d'aide.
+11. Conditions d'utilisation.
+12. Politique de confidentialité.
+13. Page de connexion.
+14. Page de création de compte.
+15. Page de récupération du compte.
+
+## Pages privées
+
+1. Tableau de bord général.
+2. Profil utilisateur.
+3. Paramètres du compte.
+4. Paramètres de sécurité.
+5. Mes publications.
+6. Publier un don.
+7. Détail de mes dons.
+8. Mes réservations.
+9. Mes demandes et intérêts.
+10. Messagerie.
+11. Notifications.
+12. Tableau de bord donateur.
+13. Tableau de bord bénéficiaire.
+14. Tableau de bord Pommes et coupons.
+15. Coffre-fort de coupons.
+16. Historique des gains.
+17. Historique des coupons utilisés.
+18. Gestion des appareils et sessions si compatible avec les mécanismes Firebase utilisés.
+
+## Pages d'administration
+
+Créer un espace d'administration protégé avec :
+- Tableau de bord global.
+- Gestion des utilisateurs.
+- Gestion des publications.
+- Gestion des signalements.
+- Modération des images et des descriptions.
+- Gestion des catégories.
+- Gestion des enseignes partenaires.
+- Gestion des coupons.
+- Vérification des coupons en magasin.
+- Gestion des règles de fidélité.
+- Journal d'audit.
+- Statistiques globales.
+- Configuration des notifications.
+- Paramètres de la plateforme.
+
+L'administration doit être inaccessible aux utilisateurs ordinaires.
+
+---
+
+# 5. PAGE D'ACCUEIL
+
+Créer une page d'accueil moderne et engageante.
+
+## En-tête
+
+Afficher :
+- Logo Zarazarao.
+- Accueil.
+- Explorer les dons.
+- Catégories.
+- Classement.
+- Carte du partage.
+- Bouton Connexion.
+- Bouton Créer un compte.
+- Bouton Publier un don si l'utilisateur est connecté.
+
+Sur mobile, utiliser une navigation compacte.
+
+## Section principale
+
+Titre :
+
+« Et si ce dont tu n'as plus besoin devenait le bonheur de quelqu'un ? »
+
+Sous-titre :
+
+« Sur Zarazarao, donne gratuitement, reçois avec gratitude et fais grandir l'esprit de partage à Madagascar. »
+
+Boutons :
+- Explorer les dons.
+- Offrir un objet.
+
+Utiliser une illustration ou une composition photographique chaleureuse évoquant le partage d'objets entre particuliers.
+
+## Sections suivantes
+
+Afficher :
+- Les dons récemment publiés.
+- Les dons proches de l'utilisateur.
+- Les catégories populaires.
+- Les publications bientôt récupérées si cette information est disponible.
+- Les meilleurs donateurs.
+- Les villes les plus actives.
+- Le nombre total de dons publiés.
+- Le nombre total de dons récupérés.
+- Le nombre de membres.
+- Le nombre de villes couvertes.
+- Une présentation du système de Pommes.
+- Un appel à rejoindre la communauté.
+
+Les statistiques publiques doivent être calculées à partir de données réelles.
+
+Ne fabrique pas de chiffres présentés comme réels.
+
+Si la plateforme ne possède pas encore de données, afficher des états vides ou des valeurs nulles accompagnées d'un message approprié.
+
+---
+
+# 6. EXPLORATION DES DONS
+
+Un visiteur non connecté peut explorer librement les publications publiques.
+
+Il peut consulter :
+- Les images.
+- Le nom du don.
+- La description.
+- L'état de l'objet.
+- Le nom public du donateur.
+- La ville.
+- Le fokontany.
+- La date de publication.
+- Le nombre d'utilisateurs intéressés.
+- Le statut du don.
+
+Ne publie jamais l'adresse postale exacte d'un utilisateur sur une annonce publique.
+
+La ville et le fokontany peuvent être visibles, mais les coordonnées précises du domicile doivent rester privées.
+
+## Barre de recherche
+
+Créer une recherche fonctionnelle sur :
+- Le titre.
+- La description.
+- La catégorie.
+- La ville.
+- Le fokontany.
+- L'état de l'objet.
+- Le statut de disponibilité.
+
+Prévoir des filtres :
+- Plus récents.
+- Plus proches.
+- Plus consultés.
+- Catégorie.
+- Ville.
+- Fokontany.
+- Disponible.
+- Réservé.
+- Objet à récupérer.
+- Objet pouvant être livré.
+
+Les filtres doivent réellement modifier les résultats.
+
+Utilise une pagination ou un chargement progressif pour éviter de charger toutes les publications en même temps.
+
+Optimise les requêtes Firestore et documente les index nécessaires.
+
+## Catégories
+
+Prévoir au minimum :
+- Vêtements et chaussures.
+- Mobilier.
+- Électroménager.
+- Informatique et téléphonie.
+- Livres et fournitures.
+- Jouets et jeux.
+- Articles pour bébés.
+- Cuisine et maison.
+- Décoration.
+- Sport et loisirs.
+- Matériaux et bricolage.
+- Jardinage.
+- Accessoires.
+- Autres.
+
+Les catégories doivent être administrables.
+
+---
+
+# 7. AUTHENTIFICATION ET CRÉATION DE COMPTE
+
+La plateforme doit permettre une inscription simple, mais sécurisée.
+
+## Méthodes de connexion
+
+Prévoir :
+1. Connexion par numéro de téléphone et mot de passe.
+2. Inscription et connexion avec Google.
+3. Association d'un compte Google à un compte existant.
+4. Vérification du numéro de téléphone.
+5. Réinitialisation sécurisée du mot de passe.
+6. Authentification multifacteur facultative.
+
+Utilise Firebase Authentication comme base de l'authentification.
+
+Attention : l'authentification téléphonique native de Firebase utilise principalement un code SMS et ne constitue pas, à elle seule, une authentification par numéro de téléphone et mot de passe.
+
+Pour satisfaire l'exigence numéro de téléphone + mot de passe, conçois un flux sécurisé reposant sur une identité Firebase et une association vérifiée entre le numéro et le compte. Toute éventuelle résolution du numéro vers une identité de connexion doit être effectuée côté serveur, avec protection contre l'énumération des comptes, limitation des tentatives et vérification du numéro.
+
+Ne stocke jamais les mots de passe en clair dans Firestore ou ailleurs.
+
+N'invente pas de mécanisme cryptographique maison.
+
+Ne crée pas un compte Firebase différent à chaque connexion Google si un compte vérifié existe déjà pour le même utilisateur.
+
+Gère correctement les conflits d'identité et l'association des fournisseurs de connexion.
+
+## Informations obligatoires à l'inscription
+
+- Nom.
+- Prénom.
+- Numéro de téléphone.
+- Ville de résidence.
+- Mot de passe si cette méthode est choisie.
+- Acceptation des conditions d'utilisation.
+- Acceptation de la politique de confidentialité.
+
+Le numéro de téléphone doit être vérifié avant l'activation des fonctionnalités sensibles.
+
+Chaque numéro de téléphone vérifié ne peut être associé qu'à un seul compte actif.
+
+Utilise un identifiant normalisé du numéro, au format international E.164.
+
+Mets en place une réservation transactionnelle du numéro et une gestion des conflits côté serveur.
+
+Ne stocke pas le numéro en clair dans un document accessible publiquement.
+
+Pour empêcher les doublons, utilise une structure privée dédiée avec des règles de sécurité strictes. Évalue la nécessité de protéger les numéros avec un mécanisme de pseudonymisation adapté, notamment si des recherches ou des comparaisons doivent être effectuées.
+
+Ne considère pas le simple fait de saisir un numéro comme une vérification de son authenticité.
+
+## Profil progressif
+
+Après une inscription Google, demander les informations obligatoires encore manquantes.
+
+Afficher une barre de progression du profil.
+
+Le profil doit pouvoir être complété progressivement.
+
+Informations complémentaires :
+- Photo de profil.
+- Adresse postale.
+- Ville.
+- Fokontany.
+- Informations de présentation.
+- Préférences de notification.
+- Langue.
+- Autres informations utiles et facultatives.
+
+Ne demande pas de données inutiles à l'utilisation du service.
+
+## Politique des mots de passe
+
+Lorsqu'un mot de passe est utilisé, imposer :
+- Minimum 8 caractères.
+- Au moins une majuscule.
+- Au moins une minuscule.
+- Au moins un chiffre.
+- Au moins un caractère spécial.
+
+Afficher les critères en temps réel pendant la saisie.
+
+Valider les mêmes critères côté serveur ou dans le mécanisme d'authentification réellement utilisé.
+
+Ajouter :
+- Confirmation du mot de passe.
+- Affichage ou masquage du mot de passe.
+- Indicateur de robustesse.
+- Messages d'erreur explicites.
+- Protection contre les tentatives répétées.
+- Réinitialisation sécurisée.
+
+La récupération de compte doit utiliser les mécanismes de récupération réellement configurés.
+
+Prévoir la récupération par e-mail ou SMS selon les possibilités du fournisseur et la configuration effective.
+
+Ne prétends pas qu'un SMS ou un e-mail a été envoyé si aucun service ne l'a réellement envoyé.
+
+## Authentification multifacteur
+
+Proposer l'activation facultative de :
+- Google Authenticator, via un mécanisme TOTP compatible.
+- Un code de vérification transmis par WhatsApp, si un fournisseur officiel compatible est configuré.
+
+Pour WhatsApp, prévoir une intégration avec un fournisseur autorisé et documenter les identifiants, les coûts éventuels et les étapes d'activation.
+
+Ne simule jamais l'envoi d'un code WhatsApp.
+
+Les codes doivent avoir une durée de validité limitée, être protégés contre la réutilisation et faire l'objet d'une limitation des tentatives.
+
+---
+
+# 8. PROFIL UTILISATEUR
+
+Créer un profil public et un espace privé.
+
+## Profil public
+
+Afficher :
+- Photo de profil.
+- Prénom et nom ou nom d'affichage choisi.
+- Ville.
+- Date d'inscription.
+- Nombre de dons publiés.
+- Nombre de dons récupérés par des bénéficiaires.
+- Nombre de publications actuellement disponibles.
+- Nombre de pommes cumulées, selon une politique de confidentialité clairement définie.
+- Niveau de participation.
+- Historique public des dons si l'utilisateur l'autorise.
+
+Ne jamais exposer :
+- Mot de passe.
+- Numéro de téléphone complet.
+- E-mail privé.
+- Adresse postale exacte.
+- Secrets d'authentification.
+- Données de connexion.
+- Historique privé des conversations.
+
+## Profil privé
+
+Permettre :
+- La modification des informations personnelles.
+- Le changement de photo.
+- La mise à jour de la ville.
+- La mise à jour du fokontany.
+- La gestion de l'adresse.
+- La gestion des préférences de notification.
+- La consultation des activités.
+- La gestion de la sécurité.
+- La gestion des sessions.
+- La demande de suppression du compte.
+
+La suppression du compte doit suivre une procédure sécurisée et traiter correctement les publications, conversations, données de fidélité et obligations de conservation applicables.
+
+---
+
+# 9. PUBLICATION D'UN DON
+
+Créer un formulaire de publication professionnel.
+
+Le formulaire doit être simple à utiliser sur mobile.
+
+## Champs obligatoires
+
+1. Titre du don.
+2. Description détaillée.
+3. Catégorie.
+4. État de l'objet sur une échelle de 0 à 10.
+5. Ville.
+6. Fokontany.
+7. Mode de remise.
+8. Photographies réelles de l'objet.
+
+Le mode de remise doit proposer :
+- À récupérer par le bénéficiaire.
+- Livraison possible.
+- À discuter avec le donateur.
+
+Ajouter un champ facultatif pour les précisions particulières.
+
+Exemples :
+- Objet à récupérer sur rendez-vous.
+- Objet fragile.
+- Prévoir un sac de transport.
+- Plusieurs éléments inclus.
+- Disponibilité uniquement le week-end.
+
+## Photographies
+
+Autoriser jusqu'à 20 images par publication.
+
+Exiger au moins une image réelle de l'objet.
+
+Les images doivent :
+- Être téléversées vers Cloud Storage.
+- Être associées à la publication.
+- Être compressées ou redimensionnées pour optimiser les performances.
+- Être affichées dans une galerie.
+- Permettre le choix d'une image principale.
+- Permettre la suppression ou le remplacement avant publication.
+- Faire l'objet de contrôles de type MIME, taille et autorisation.
+- Être protégées contre les fichiers malveillants et les extensions trompeuses.
+
+Définir une limite de taille par fichier, configurable côté serveur.
+
+Ne fais pas confiance au nom de fichier fourni par le navigateur.
+
+Prévoir une modération des images signalées ou suspectes.
+
+La plateforme doit demander à l'utilisateur de confirmer que les photographies représentent réellement l'objet proposé.
+
+Ne prétends pas pouvoir garantir automatiquement l'authenticité d'une photographie sans mécanisme de vérification adapté.
+
+## Publication
+
+À la validation :
+1. Vérifier les informations.
+2. Vérifier les autorisations.
+3. Créer la publication.
+4. Associer les images.
+5. Enregistrer la date de publication.
+6. Initialiser les statistiques.
+7. Générer l'identifiant de publication.
+8. Déclencher les opérations de fidélité autorisées.
+9. Afficher la publication.
+10. Envoyer les notifications pertinentes.
+
+La première publication validée d'un utilisateur déclenche un bonus unique de 50 pommes.
+
+Ce bonus ne doit jamais être attribué plusieurs fois.
+
+La publication doit contenir un identifiant de propriétaire impossible à modifier par un autre utilisateur.
+
+## Statuts de publication
+
+Prévoir les statuts :
+- BROUILLON.
+- EN_ATTENTE_DE_MODERATION si nécessaire.
+- DISPONIBLE.
+- RESERVE.
+- RECUPERE.
+- INDISPONIBLE.
+- ARCHIVE.
+- SIGNALE ou SUSPENDU lorsque cela est justifié.
+
+Afficher des libellés compréhensibles dans l'interface :
+- Disponible.
+- Réservé.
+- Don récupéré.
+- Indisponible.
+
+Ne supprime pas automatiquement l'historique lorsqu'un don est récupéré.
+
+---
+
+# 10. INTÉRÊTS ET COMPTEURS DE CONSULTATION
+
+Chaque clic sur une publication de don doit être enregistré et comptabilisé comme un intérêt, selon les règles suivantes.
+
+Il faut distinguer :
+- Les consultations publiques.
+- Les consultations d'un utilisateur connecté.
+- Les utilisateurs uniques intéressés.
+- Les demandes de discussion.
+- Les réservations.
+- Les dons effectivement récupérés.
+
+## Enregistrement des intérêts
+
+Pour un utilisateur connecté :
+- Enregistrer la consultation.
+- Associer la consultation à la publication.
+- Associer l'événement à l'utilisateur.
+- Enregistrer l'horodatage.
+- Empêcher qu'une simple répétition de clics gonfle artificiellement les statistiques uniques.
+
+Pour un visiteur non connecté :
+- Enregistrer, si cela est approprié, des statistiques agrégées de consultation.
+- Respecter les règles de confidentialité.
+- Ne pas utiliser d'identifiant invasif ou de suivi excessif.
+
+Ne présente pas le nombre de clics bruts comme le nombre de personnes distinctes.
+
+Expose séparément :
+- Nombre de consultations.
+- Nombre de personnes uniques intéressées.
+- Nombre de conversations initiées.
+
+Les événements analytiques doivent être traités de manière idempotente.
+
+Le comptage des intérêts doit être disponible dans les tableaux de bord autorisés et dans les statistiques publiques de chaque publication.
+
+Les utilisateurs ne doivent pas pouvoir modifier eux-mêmes les compteurs.
+
+---
+
+# 11. SYSTÈME DE RÉSERVATION
+
+C'est une fonctionnalité essentielle.
+
+Le processus doit être entièrement synchronisé entre le donateur, le bénéficiaire et la publication.
+
+## Étape 1 : intérêt
+
+Un utilisateur consulte une publication.
+
+Il peut sélectionner :
+
+« Discuter avec le donateur ».
+
+S'il n'est pas connecté, afficher une page ou une fenêtre d'authentification lui permettant de se connecter ou de créer un compte avant de poursuivre.
+
+Après authentification, ramener l'utilisateur vers la publication d'origine.
+
+## Étape 2 : discussion
+
+Créer ou ouvrir une conversation liée à la publication.
+
+Le donateur reçoit une notification.
+
+Le bénéficiaire peut échanger avec lui.
+
+La conversation doit être liée à l'identifiant du don et aux identifiants des deux utilisateurs.
+
+## Étape 3 : réservation par le donateur
+
+Dans la conversation, afficher au donateur autorisé un bouton :
+
+« Réserver ce don pour ce bénéficiaire ».
+
+Lorsqu'il clique :
+1. Vérifier que le don lui appartient.
+2. Vérifier que le don est disponible.
+3. Vérifier qu'il n'est pas déjà réservé à une autre personne.
+4. Exécuter une transaction côté serveur.
+5. Enregistrer le bénéficiaire concerné.
+6. Passer le statut du don à RESERVE.
+7. Mettre à jour les vues concernées.
+8. Créer un événement système dans la conversation.
+9. Notifier le bénéficiaire.
+
+Afficher automatiquement le badge « Réservé » sur la publication.
+
+Le nom du bénéficiaire ne doit pas être exposé publiquement.
+
+La réservation ne doit pas pouvoir être effectuée deux fois simultanément au profit de deux personnes différentes.
+
+## Étape 4 : confirmation du bénéficiaire
+
+Lorsque le don est réservé à un utilisateur, afficher dans sa conversation un message système :
+
+« Bonne nouvelle ! Ce don a été réservé pour toi. Lorsque tu auras récupéré l'objet, confirme sa réception. »
+
+Afficher un bouton :
+
+« Oui, j'ai reçu le don ».
+
+Ce bouton doit être accessible uniquement au bénéficiaire désigné.
+
+## Étape 5 : confirmation de réception
+
+Lorsque le bénéficiaire clique sur le bouton :
+1. Demander une confirmation.
+2. Vérifier son identité.
+3. Vérifier qu'il est bien le bénéficiaire réservé.
+4. Vérifier que le don est toujours dans un état compatible.
+5. Enregistrer la confirmation avec horodatage.
+6. Passer le statut du don à RECUPERE.
+7. Mettre à jour les tableaux de bord.
+8. Envoyer une notification au donateur.
+9. Ajouter un événement système dans la conversation.
+10. Conserver l'historique de l'opération.
+
+Le don doit alors apparaître comme indisponible pour les autres utilisateurs.
+
+Le bouton de confirmation ne doit pas être accessible au donateur à la place du bénéficiaire.
+
+## Étape 6 : annulation ou retrait de réservation
+
+Le système doit permettre une annulation contrôlée.
+
+Le donateur peut cliquer sur :
+
+« Annuler la réservation ».
+
+Le bénéficiaire peut cliquer sur :
+
+« Annuler ma réservation ».
+
+Dans les deux cas :
+- Demander une confirmation.
+- Enregistrer l'auteur de l'action.
+- Enregistrer le motif si nécessaire.
+- Ajouter un événement système dans la conversation.
+- Notifier l'autre partie.
+- Mettre à jour les tableaux de bord.
+- Rendre le don disponible si aucune autre contrainte ne l'empêche.
+
+Après annulation, le bénéficiaire ne doit plus pouvoir confirmer la réception de cette ancienne réservation.
+
+Le système doit conserver l'historique des réservations annulées.
+
+## Cas particuliers
+
+Gérer :
+- Deux bénéficiaires intéressés simultanément.
+- Réservation déjà existante.
+- Don supprimé ou suspendu.
+- Utilisateur bloqué.
+- Compte désactivé.
+- Erreur réseau.
+- Confirmation de réception envoyée deux fois.
+- Annulation pendant une opération concurrente.
+- Conversation inaccessible.
+- Notification non distribuée.
+
+Toutes les transitions de statut doivent être contrôlées côté serveur.
+
+Ne permets pas à un utilisateur de modifier directement le statut d'une publication dans Firestore.
+
+---
+
+# 12. MESSAGERIE INTERNE COMPLÈTE
+
+Créer une messagerie inspirée des meilleures pratiques des plateformes modernes d'échange entre particuliers.
+
+La messagerie doit être fonctionnelle, temps réel, sécurisée et adaptée aux mobiles.
+
+## Principe
+
+Une conversation est créée à partir d'une publication de don.
+
+La conversation associe :
+- Le don.
+- Le donateur.
+- Le bénéficiaire potentiel.
+- Les participants autorisés.
+- L'historique des messages.
+- L'historique des événements de réservation.
+
+Ne permets pas de conversation arbitraire avec n'importe quel utilisateur si elle n'est pas initiée par une interaction autorisée avec une publication, sauf évolution ultérieure explicitement définie.
+
+## Interface
+
+Sur ordinateur :
+- Colonne de gauche : conversations.
+- Partie centrale : discussion.
+- En-tête avec le don concerné.
+- Panneau latéral facultatif avec résumé du don et statut.
+
+Sur mobile :
+- Liste des conversations.
+- Ouverture de la conversation en plein écran.
+- Bouton de retour.
+- Zone de saisie adaptée au clavier mobile.
+
+## Fonctions de messagerie
+
+Implémente :
+- Messages texte en temps réel.
+- Emojis.
+- Sélecteur d'emojis.
+- Réactions aux messages.
+- Envoi de photos.
+- Envoi de vidéos.
+- Envoi de documents autorisés.
+- Aperçu des pièces jointes.
+- Indicateur d'envoi.
+- Indicateur de message envoyé.
+- Indicateur de lecture lorsque disponible.
+- Horodatage.
+- Pagination des anciens messages.
+- Notifications des nouveaux messages.
+- Compteur de messages non lus.
+- Réponse à un message précis.
+- Copie de texte.
+- Suppression ou retrait de message selon une politique clairement définie.
+- Signalement d'un message.
+- Blocage d'un utilisateur.
+- État de présence facultatif.
+- Recherche dans les conversations si possible.
+- Gestion des erreurs de téléversement.
+- Reprise des opérations lorsque le réseau revient.
+
+Ne marque pas un message comme lu uniquement parce qu'il est affiché dans la liste des conversations.
+
+## Médias
+
+Utilise Cloud Storage pour les fichiers.
+
+Les fichiers doivent être accessibles uniquement aux personnes autorisées selon la politique définie.
+
+Contrôle :
+- Le type de fichier.
+- La taille.
+- L'autorisation d'accès.
+- Le participant à la conversation.
+- Les règles de conservation.
+- Les risques de fichiers malveillants.
+
+Ne rends pas les pièces jointes privées accessibles à travers des chemins publics permanents.
+
+## Appels audio et vidéo
+
+Prévoir la possibilité de :
+- Passer un appel audio.
+- Passer un appel vidéo.
+- Accepter un appel entrant.
+- Refuser un appel.
+- Terminer un appel.
+- Activer ou désactiver le microphone.
+- Activer ou désactiver la caméra.
+- Afficher la durée de l'appel.
+- Gérer les interruptions réseau.
+
+Utilise WebRTC pour la communication temps réel lorsque cela est possible.
+
+Utilise Firestore ou un mécanisme serveur adapté pour la signalisation, avec des autorisations strictes.
+
+Prévois une configuration STUN/TURN.
+
+Documente la nécessité éventuelle d'un serveur TURN et ses coûts.
+
+Ne prétends pas qu'un appel audio ou vidéo fonctionne tant que la signalisation, la négociation WebRTC et la connectivité réseau n'ont pas été testées.
+
+Ne demande pas aux utilisateurs de communiquer publiquement leur numéro de téléphone pour pouvoir utiliser la messagerie.
+
+## Notifications système dans le chat
+
+Les événements suivants doivent apparaître comme messages système :
+- Réservation créée.
+- Réservation annulée.
+- Don confirmé comme récupéré.
+- Don rendu de nouveau disponible.
+- Conversation signalée ou suspendue si nécessaire.
+
+Ces événements ne doivent pas pouvoir être fabriqués par un participant en envoyant simplement un texte.
+
+Ils doivent être générés par le backend.
+
+## Statut de conversation
+
+Prévoir :
+- Active.
+- Archivée.
+- Fermée.
+- Suspendue pour modération.
+
+L'archivage d'une conversation ne doit pas supprimer les informations nécessaires à l'historique des dons.
+
+---
+
+# 13. NOTIFICATIONS
+
+Créer un centre de notifications intégré.
+
+Prévoir les notifications suivantes :
+- Nouveau message.
+- Nouveau bénéficiaire intéressé.
+- Réservation créée.
+- Réservation annulée.
+- Don récupéré.
+- Nouvelle réponse dans une conversation.
+- Publication modérée.
+- Publication signalée.
+- Gain de pommes.
+- Coupon créé.
+- Coupon bientôt expiré si une expiration existe.
+- Coupon utilisé.
+- Alerte de sécurité.
+
+Chaque notification doit contenir :
+- Un identifiant.
+- Un type.
+- Un titre.
+- Un texte.
+- Un horodatage.
+- Un état lu/non lu.
+- Une référence vers la ressource concernée.
+
+Les notifications doivent être générées côté serveur pour les événements critiques.
+
+Prévoir :
+- Notifications internes.
+- Notifications push via Firebase Cloud Messaging si configuré.
+- Préférences utilisateur.
+
+L'envoi d'e-mails, de SMS et de messages WhatsApp nécessite un fournisseur réellement configuré.
+
+N'affiche jamais une confirmation d'envoi externe si l'envoi n'a pas eu lieu.
+
+---
+
+# 14. SYSTÈME DE FIDÉLITÉ : LES POMMES
+
+Créer un système de fidélité appelé « Les Pommes ».
+
+Icône principale : une pomme.
+
+Les pommes sont des points virtuels de fidélité.
+
+Elles ne sont pas une monnaie utilisable entre particuliers et ne peuvent pas être utilisées pour payer un objet donné.
+
+## Attribution initiale
+
+Lorsqu'un utilisateur crée un compte et que celui-ci est effectivement créé, attribuer 10 pommes.
+
+Cette récompense doit être unique pour le compte.
+
+## Profil complet
+
+Lorsqu'un utilisateur complète intégralement son profil, attribuer 10 pommes supplémentaires.
+
+Les informations exigées pour ce bonus doivent être clairement définies :
+- Nom.
+- Prénom.
+- Photo de profil.
+- Numéro de téléphone vérifié.
+- E-mail vérifié lorsque requis.
+- Adresse postale complète.
+- Ville.
+- Fokontany.
+
+Ne récompense pas plusieurs fois la même complétion.
+
+Ne considère pas un champ simplement rempli comme vérifié lorsque sa vérification est nécessaire.
+
+Le système doit pouvoir déterminer côté serveur si le profil répond aux critères du bonus.
+
+## Première publication
+
+Lors de la première publication valide d'un don, attribuer 50 pommes supplémentaires.
+
+Ce bonus est unique par compte.
+
+Une publication supprimée puis recréée ne doit pas permettre de réclamer plusieurs fois ce bonus.
+
+## Récompense aléatoire par publication
+
+Lorsqu'un utilisateur publie un don admissible, déclencher un calcul aléatoire de récompense entre 10 et 1000 pommes incluses.
+
+La récompense est attribuée une seule fois pour cette publication.
+
+Le calcul doit :
+- Être exécuté côté serveur.
+- Utiliser une source d'aléatoire adaptée.
+- Être associé à l'identifiant de la publication.
+- Être enregistré dans le journal de fidélité.
+- Être idempotent.
+- Ne jamais pouvoir être modifié par le navigateur.
+
+Les règles d'admissibilité doivent être configurables.
+
+Pour éviter la publication massive de faux dons, prévois une protection contre les abus et une possibilité de mise en attente de la récompense lorsqu'une publication doit être modérée.
+
+La récompense aléatoire doit être affichée avec une animation discrète après attribution effective.
+
+Exemple :
+
+« Bravo ! Ton geste de partage te rapporte 247 pommes. »
+
+Ne montre pas de récompense définitive avant que le serveur ait confirmé son attribution.
+
+## Solde
+
+Le solde doit être calculé à partir d'un journal de transactions de fidélité.
+
+Ne conserve pas uniquement un nombre que le client peut modifier.
+
+Prévois :
+- Gains.
+- Conversions en coupons.
+- Ajustements administratifs autorisés.
+- Annulations documentées.
+- Historique complet.
+- Horodatage.
+- Référence de chaque opération.
+
+Les écritures doivent être protégées contre les doublons.
+
+Le système doit empêcher un solde négatif non autorisé.
+
+## Historique
+
+Chaque mouvement doit contenir :
+- Identifiant de transaction.
+- Identifiant utilisateur.
+- Type d'opération.
+- Nombre de pommes.
+- Solde résultant si nécessaire.
+- Date et heure.
+- Source de l'opération.
+- Identifiant de publication ou de coupon associé.
+- Statut.
+- Motif d'annulation si nécessaire.
+
+Le journal doit être immuable pour les utilisateurs ordinaires.
+
+Les corrections administratives doivent être traçables.
+
+---
+
+# 15. CONVERSION DES POMMES EN COUPONS
+
+Le modèle de fidélité repose sur la règle :
+
+1000 pommes = 1000 Ar de valeur faciale de coupon.
+
+Le montant du coupon doit être calculé selon le nombre de pommes effectivement converties.
+
+Les conversions ne doivent jamais permettre de créer de la valeur supplémentaire par arrondi.
+
+## Exemple
+
+1000 pommes = 1000 Ar.
+
+5000 pommes = 5000 Ar.
+
+10 000 pommes = 10 000 Ar.
+
+Le montant minimal d'un coupon utilisable en magasin est de 10 000 Ar.
+
+La création d'un coupon inférieur à ce seuil peut être autorisée si elle sert à constituer une réserve de fidélité, mais ce coupon doit rester inutilisable en magasin tant qu'il n'atteint pas le seuil requis.
+
+Privilégie une conception dans laquelle l'utilisateur peut choisir le nombre de pommes à convertir, avec un aperçu clair du montant obtenu.
+
+## Flux de conversion
+
+Lorsqu'un utilisateur clique sur « Convertir mes pommes » :
+1. Afficher le solde actuel.
+2. Afficher le montant de coupon correspondant.
+3. Demander le montant de conversion.
+4. Vérifier le solde disponible.
+5. Afficher un récapitulatif.
+6. Demander une confirmation.
+7. Exécuter une transaction côté serveur.
+8. Débiter les pommes.
+9. Créer le coupon ou le crédit de fidélité correspondant.
+10. Enregistrer le mouvement.
+11. Actualiser l'interface.
+
+Si la conversion échoue, les pommes ne doivent pas être perdues.
+
+La conversion doit être atomique.
+
+Ne permets pas de convertir plusieurs fois les mêmes pommes.
+
+## Attention au modèle économique
+
+Les coupons constituent une récompense de fidélité liée à des partenaires commerciaux.
+
+Prévois une architecture configurable pour gérer :
+- Les enseignes.
+- Les règles d'utilisation.
+- Les montants admissibles.
+- Les dates de validité.
+- Les catégories de produits éventuellement exclues.
+- Les plafonds définis dans les accords avec les partenaires.
+- Les conditions de remboursement ou d'annulation si elles existent.
+- Les règles de financement des récompenses.
+
+Ne suppose pas qu'une enseigne a accepté un partenariat tant que cela n'a pas été confirmé.
+
+Ne crée pas de faux logos ou de fausses annonces de partenariat.
+
+---
+
+# 16. COFFRE-FORT NUMÉRIQUE DE COUPONS
+
+Créer un espace élégant intitulé :
+
+« Mon coffre-fort de coupons ».
+
+Il doit permettre de consulter :
+- Les pommes disponibles.
+- Les pommes déjà converties.
+- Les coupons actifs.
+- Les coupons en attente d'utilisation.
+- Les coupons utilisés.
+- Les coupons expirés, le cas échéant.
+- L'historique des conversions.
+
+## Carte de coupon
+
+Chaque coupon doit contenir :
+- Le logo Zarazarao.
+- Le nom de l'enseigne partenaire.
+- Le montant de la réduction.
+- Le code du coupon.
+- Un code-barres.
+- La date de création.
+- La date d'expiration si applicable.
+- Les conditions d'utilisation.
+- Le statut.
+
+Le code du coupon doit être composé de huit chiffres.
+
+Le code doit être généré de manière sécurisée côté serveur.
+
+Il doit être unique dans le périmètre requis.
+
+La génération doit prévoir les collisions et les tentatives de devinette.
+
+Ne considère jamais que huit chiffres constituent à eux seuls une sécurité suffisante.
+
+Le système doit aussi utiliser un identifiant interne, un état de validation, des contrôles d'autorisation, des limites de tentatives et un mécanisme de révocation.
+
+Le code-barres doit être généré à partir du code réellement attribué.
+
+Ne crée pas de code-barres décoratif sans valeur de vérification.
+
+## Téléchargement et impression
+
+Proposer :
+- Télécharger le coupon en PDF.
+- Imprimer le coupon.
+- Consulter les conditions d'utilisation.
+- Afficher le coupon sur mobile.
+
+Le PDF doit être généré à partir des données confirmées par le serveur.
+
+Le coupon doit rester lisible lorsqu'il est imprimé.
+
+Prévoir une mise en page propre et professionnelle.
+
+## Utilisation du coupon
+
+Le bouton « Utiliser dans mon magasin préféré » doit apparaître lorsque le coupon est admissible et atteint le seuil de 10 000 Ar.
+
+Lors du clic :
+1. Ouvrir une fenêtre élégante.
+2. Afficher les enseignes partenaires réellement actives.
+3. Permettre de sélectionner une enseigne.
+4. Afficher les conditions du partenaire.
+5. Demander une confirmation.
+6. Associer le coupon à l'enseigne sélectionnée.
+7. Mettre à jour son statut.
+
+L'affectation à un magasin ne signifie pas que le coupon a été utilisé.
+
+Le coupon ne devient utilisé qu'après validation par un mécanisme autorisé.
+
+Ne consomme pas définitivement le coupon au simple clic sur « Utiliser ».
+
+## Statuts de coupon
+
+Prévoir :
+- CRÉÉ.
+- EN_ATTENTE_D'UTILISATION si nécessaire.
+- ACTIF.
+- AFFECTÉ_À_UNE_ENSEIGNE.
+- UTILISÉ.
+- EXPIRÉ.
+- ANNULÉ.
+- RÉVOQUÉ.
+
+Utilise des libellés français compréhensibles dans l'interface.
+
+---
+
+# 17. VALIDATION DES COUPONS EN MAGASIN
+
+Créer un module sécurisé de vérification pour les partenaires.
+
+Prévoir une interface dédiée aux utilisateurs partenaires autorisés.
+
+Un magasin doit pouvoir vérifier qu'un coupon est :
+- Authentique.
+- Actif.
+- Affecté à la bonne enseigne lorsque cela est requis.
+- D'un montant autorisé.
+- Non expiré.
+- Non utilisé.
+- Non révoqué.
+
+## Flux de validation
+
+1. Le personnel du magasin se connecte à son compte partenaire.
+2. Il saisit le code à huit chiffres ou scanne le code-barres.
+3. Le backend vérifie le coupon.
+4. Le système affiche les informations minimales nécessaires.
+5. Le personnel confirme l'utilisation.
+6. Le backend vérifie à nouveau l'état du coupon.
+7. Le coupon passe à UTILISÉ.
+8. L'opération est enregistrée.
+9. Le coupon devient inutilisable.
+10. L'utilisateur reçoit une notification.
+11. Le coupon apparaît dans « Coupons utilisés ».
+
+La validation doit être effectuée côté serveur.
+
+Une transaction ou un mécanisme équivalent doit empêcher deux magasins d'utiliser simultanément le même coupon.
+
+Le système doit être résistant aux doubles validations.
+
+Ne permet pas aux comptes partenaires d'accéder aux données privées complètes des bénéficiaires.
+
+Prévoir un journal d'audit des utilisations.
+
+L'interface partenaire doit être séparée de l'interface publique et protégée par des rôles spécifiques.
+
+Un utilisateur ordinaire ne doit jamais pouvoir déclarer lui-même son coupon comme utilisé.
+
+---
+
+# 18. TABLEAU DE BORD DONATEUR
+
+Créer un dashboard complet, moderne et riche en données.
+
+Il doit être accessible depuis le profil de l'utilisateur.
+
+## Indicateurs principaux
+
+Afficher :
+- Nombre total de dons publiés.
+- Nombre de dons disponibles.
+- Nombre de dons réservés.
+- Nombre de dons récupérés.
+- Nombre de dons annulés ou archivés.
+- Nombre total de consultations.
+- Nombre de personnes uniques intéressées.
+- Nombre de conversations initiées.
+- Taux de réservation.
+- Taux de récupération.
+- Nombre de pommes gagnées.
+- Évolution mensuelle de l'activité.
+
+## Définitions des indicateurs
+
+Le taux de réservation doit être défini précisément, par exemple :
+
+Nombre de publications ayant fait l'objet d'une réservation valide / nombre de publications admissibles.
+
+Le taux de récupération doit être calculé sur une base explicite et documentée.
+
+Ne mélange pas les réservations annulées avec les réservations actives.
+
+Les définitions doivent rester cohérentes dans tous les dashboards.
+
+## Graphiques
+
+Prévoir :
+- Évolution des publications.
+- Évolution des consultations.
+- Répartition des statuts.
+- Taux de récupération.
+- Activité par période.
+- Catégories les plus données.
+- Répartition géographique agrégée des personnes intéressées lorsque cela est pertinent.
+
+## Tableau des publications
+
+Afficher :
+- Image.
+- Titre.
+- Date de publication.
+- Nombre de consultations.
+- Nombre de personnes uniques intéressées.
+- Nombre de conversations.
+- Statut.
+- Nombre de réservations.
+- Date de récupération lorsqu'elle existe.
+
+Permettre de filtrer par période et par statut.
+
+## Temporalité
+
+Tous les événements doivent avoir des horodatages cohérents.
+
+Stocker les dates au format Timestamp de Firestore.
+
+Utiliser le fuseau horaire approprié dans l'interface, notamment Africa/Antananarivo pour Madagascar.
+
+---
+
+# 19. TABLEAU DE BORD BÉNÉFICIAIRE
+
+Créer un deuxième dashboard distinct.
+
+## Indicateurs
+
+Afficher :
+- Nombre de dons consultés.
+- Nombre de publications uniques consultées.
+- Nombre de conversations initiées.
+- Nombre de dons ayant fait l'objet d'une réservation à son nom.
+- Nombre de réservations actives.
+- Nombre de réservations annulées.
+- Nombre de dons récupérés.
+- Taux de récupération des réservations.
+- Évolution mensuelle.
+
+## Graphiques
+
+Prévoir :
+- Historique des intérêts.
+- Répartition des catégories consultées.
+- Évolution des réservations.
+- Dons récupérés par période.
+- Répartition géographique de ses recherches si cette visualisation est pertinente.
+
+## Historique
+
+Afficher une liste des dons :
+- Consultés.
+- Ayant fait l'objet d'une discussion.
+- Réservés.
+- Récupérés.
+- Annulés.
+
+L'utilisateur ne doit voir que les données auxquelles il est autorisé à accéder.
+
+---
+
+# 20. TROISIÈME DASHBOARD : POMMES ET COUPONS
+
+Créer un troisième dashboard entièrement consacré à la fidélité.
+
+Titre :
+
+« Mon espace fidélité ».
+
+## Vue d'ensemble
+
+Afficher :
+- Solde actuel de pommes.
+- Total des pommes gagnées.
+- Total des pommes converties.
+- Total des pommes annulées ou corrigées.
+- Valeur théorique de conversion du solde.
+- Total des coupons créés.
+- Total des coupons actifs.
+- Total des coupons utilisés.
+- Historique des récompenses.
+
+Ne présente pas la valeur théorique du solde comme de l'argent détenu par l'utilisateur.
+
+Explique clairement qu'il s'agit d'un système de points et de récompenses soumis aux conditions du programme.
+
+## Graphiques
+
+Prévoir :
+- Gains de pommes par mois.
+- Répartition des sources de gains.
+- Historique des conversions.
+- Coupons créés et utilisés.
+- Évolution du solde.
+
+## Historique détaillé
+
+Afficher :
+- Date et heure.
+- Type d'opération.
+- Nombre de pommes.
+- Source du gain.
+- Référence de la publication si applicable.
+- Coupon concerné.
+- Statut.
+
+## Actions
+
+Ajouter :
+- Convertir mes pommes.
+- Consulter mon coffre-fort.
+- Télécharger un coupon.
+- Imprimer un coupon.
+- Consulter les conditions de fidélité.
+
+Toutes les données doivent être réelles et synchronisées avec le backend.
+
+---
+
+# 21. CLASSEMENT PUBLIC DES DONATEURS
+
+Créer une page de classement des membres les plus actifs dans le partage.
+
+Le classement doit favoriser les contributions réelles.
+
+Critères possibles :
+- Nombre de dons récupérés.
+- Nombre de publications ayant abouti à une récupération.
+- Régularité des contributions.
+- Ancienneté des contributions confirmées.
+
+Ne classe pas les utilisateurs uniquement selon le nombre de pommes gagnées, car une récompense aléatoire pourrait fausser le classement.
+
+Ne récompense pas automatiquement les comportements artificiels.
+
+Prévoir :
+- Classement global.
+- Classement mensuel.
+- Classement par ville.
+- Classement par région.
+- Catégories de distinction.
+
+Exemples :
+- Ambassadeur du partage.
+- Donateur engagé.
+- Champion de la réutilisation.
+- Membre solidaire.
+
+Le système de classement doit être transparent.
+
+Ne publie que les informations compatibles avec les paramètres de confidentialité.
+
+---
+
+# 22. CARTE DU PARTAGE À MADAGASCAR
+
+Créer une carte interactive permettant de visualiser la répartition géographique du partage.
+
+Utilise une bibliothèque de cartographie adaptée.
+
+Privilégie OpenStreetMap avec une configuration respectueuse de ses conditions d'utilisation.
+
+## Données à afficher
+
+Prévoir :
+- Nombre de dons publiés par ville.
+- Nombre de dons récupérés par ville.
+- Nombre de membres par ville.
+- Nombre de bénéficiaires par ville.
+- Nombre de publications disponibles.
+- Répartition par région.
+- Répartition par district lorsque les données sont fiables.
+- Répartition par fokontany lorsque le niveau d'agrégation et la confidentialité le permettent.
+
+## Interactions
+
+L'utilisateur peut :
+- Cliquer sur une ville.
+- Consulter des statistiques agrégées.
+- Explorer les dons disponibles dans cette zone.
+- Filtrer par catégorie.
+- Filtrer par statut.
+- Comparer différentes périodes.
+
+## Confidentialité
+
+Ne montre jamais l'adresse exacte des utilisateurs.
+
+Ne place pas de marqueur sur le domicile d'un utilisateur.
+
+Utilise des données agrégées par zone.
+
+Évite d'afficher des statistiques permettant d'identifier facilement un individu dans une zone où il y a très peu de participants.
+
+Si les données géographiques sont incomplètes, affiche les informations disponibles sans inventer de coordonnées.
+
+Prépare le système pour l'ajout de nouveaux pays africains, avec un modèle géographique extensible.
+
+---
+
+# 23. ADMINISTRATION
+
+Créer un espace administrateur protégé.
+
+L'attribution des rôles doit être effectuée par un mécanisme de confiance, côté serveur.
+
+Ne permets jamais à un utilisateur de se déclarer administrateur en modifiant son document Firestore.
+
+## Tableau de bord global
+
+Afficher :
+- Nombre d'utilisateurs.
+- Nouveaux comptes.
+- Nombre de publications.
+- Nombre de dons disponibles.
+- Nombre de réservations.
+- Nombre de dons récupérés.
+- Nombre de conversations.
+- Volume des intérêts.
+- Nombre de pommes attribuées.
+- Nombre de coupons créés.
+- Nombre de coupons utilisés.
+- Répartition géographique.
+- Évolution temporelle.
+
+## Gestion des utilisateurs
+
+Permettre :
+- Recherche.
+- Consultation des informations autorisées.
+- Suspension temporaire.
+- Désactivation selon les mécanismes disponibles.
+- Consultation des signalements.
+- Historique des actions administratives.
+- Gestion des rôles autorisés.
+
+Toute action sensible doit être journalisée.
+
+## Gestion des publications
+
+Permettre :
+- Consultation.
+- Suspension.
+- Suppression selon une procédure contrôlée.
+- Modération des images.
+- Modération des descriptions.
+- Gestion des catégories.
+- Traitement des signalements.
+
+Ne permets pas à un administrateur ordinaire de modifier arbitrairement l'historique des transactions de fidélité.
+
+## Gestion de la fidélité
+
+Permettre :
+- Configuration des règles de gains.
+- Consultation des transactions.
+- Recherche des anomalies.
+- Ajustements exceptionnels documentés.
+- Consultation des coupons.
+- Révocation justifiée.
+- Audit des utilisations.
+
+Les opérations financières ou de fidélité sensibles doivent être soumises à des contrôles supplémentaires.
+
+## Gestion des partenaires
+
+Créer une interface permettant de gérer :
+- Nom commercial.
+- Logo.
+- Coordonnées professionnelles.
+- Statut du partenariat.
+- Conditions d'utilisation des coupons.
+- Règles de validation.
+- Comptes autorisés.
+- Historique des utilisations.
+
+Un partenaire en attente de validation ne doit pas apparaître comme un partenaire officiellement actif.
+
+---
+
+# 24. MODÉRATION ET SÉCURITÉ COMMUNAUTAIRE
+
+Prévoir :
+- Signalement d'une publication.
+- Signalement d'un utilisateur.
+- Signalement d'un message.
+- Blocage d'un utilisateur.
+- Gestion des abus.
+- Prévention des faux dons.
+- Prévention du spam.
+- Limitation des tentatives répétées.
+- Historique de modération.
+- Procédure de contestation si nécessaire.
+
+Les catégories de signalement peuvent inclure :
+- Publication trompeuse.
+- Objet interdit.
+- Photo ne correspondant pas à l'objet.
+- Harcèlement.
+- Fraude.
+- Demande d'argent.
+- Comportement dangereux.
+- Autre.
+
+Les objets interdits ou soumis à des restrictions doivent être définis dans les règles de la communauté.
+
+Prévoir des outils de modération adaptés à l'échelle de la plateforme.
+
+Ne supprime pas automatiquement un compte sur la base d'un seul signalement sans mécanisme adapté d'évaluation.
+
+---
+
+# 25. STRUCTURE FIRESTORE
+
+Conçois un modèle de données cohérent.
+
+Les collections suivantes constituent une base de départ à adapter selon les besoins.
+
+## users
+
+Informations publiques et privées séparées.
+
+Champs possibles :
+- uid.
+- firstName.
+- lastName.
+- displayName.
+- photoURL.
+- cityId.
+- fokontanyId.
+- profileCompletionStatus.
+- createdAt.
+- updatedAt.
+- isActive.
+- privacySettings.
+- notificationPreferences.
+- verifiedPhoneStatus.
+- verifiedEmailStatus.
+
+Les informations sensibles doivent être isolées dans des documents privés dont l'accès est strictement contrôlé.
+
+## donations
+
+Champs :
+- donationId.
+- ownerUid.
+- title.
+- description.
+- categoryId.
+- conditionScore.
+- imagePaths.
+- primaryImagePath.
+- cityId.
+- fokontanyId.
+- handoverMode.
+- specialInstructions.
+- status.
+- createdAt.
+- updatedAt.
+- reservedForUid.
+- reservedAt.
+- recoveredAt.
+- moderationStatus.
+- publicCounters.
+
+Ne stocke pas de numéro de téléphone ni d'adresse postale exacte dans une publication publique.
+
+## donationViews
+
+Enregistre les événements de consultation selon une politique documentée.
+
+Champs possibles :
+- eventId.
+- donationId.
+- viewerUid lorsque disponible et autorisé.
+- viewedAt.
+- sessionReference pseudonymisée lorsque nécessaire.
+
+Ne conserve pas indéfiniment des données de navigation identifiantes sans justification.
+
+## donationInterests
+
+Utilise une structure adaptée pour calculer les utilisateurs uniques intéressés et éviter les doublons.
+
+## conversations
+
+Champs :
+- conversationId.
+- donationId.
+- donorUid.
+- beneficiaryUid.
+- participantUids.
+- createdAt.
+- updatedAt.
+- lastMessageAt.
+- lastMessagePreview.
+- status.
+- unreadCounters.
+
+Ne stocke que les informations nécessaires.
+
+## conversations/{conversationId}/messages
+
+Champs :
+- messageId.
+- senderUid.
+- messageType.
+- text.
+- mediaPaths.
+- createdAt.
+- editedAt si applicable.
+- replyToMessageId.
+- reactions.
+- readState si nécessaire.
+- systemEventType si le message est un événement système.
+
+Les événements système doivent être créés par le backend.
+
+## reservations
+
+Champs :
+- reservationId.
+- donationId.
+- donorUid.
+- beneficiaryUid.
+- conversationId.
+- status.
+- createdAt.
+- cancelledAt.
+- cancellationActorUid.
+- cancellationReason.
+- recoveredAt.
+- version.
+
+Conserve l'historique des réservations annulées.
+
+## notifications
+
+Champs :
+- notificationId.
+- recipientUid.
+- type.
+- title.
+- body.
+- createdAt.
+- readAt.
+- resourceType.
+- resourceId.
+
+## loyaltyTransactions
+
+Champs :
+- transactionId.
+- uid.
+- type.
+- pointsDelta.
+- sourceType.
+- sourceId.
+- createdAt.
+- idempotencyKey.
+- status.
+- metadata.
+
+Le journal ne doit pas être modifiable directement par un utilisateur.
+
+## loyaltyAccounts
+
+Document privé permettant d'obtenir efficacement le solde actuel.
+
+Le solde doit être maintenu par le backend et rapproché du journal des transactions.
+
+## coupons
+
+Champs :
+- couponId.
+- ownerUid.
+- partnerId.
+- pointsConverted.
+- faceValueAr.
+- codeLookupHash ou mécanisme équivalent.
+- barcodePayload.
+- status.
+- createdAt.
+- expiresAt si applicable.
+- usedAt.
+- usedByPartnerUid.
+- redemptionReference.
+
+Le code à huit chiffres ne doit pas être utilisé comme seul identifiant interne.
+
+Ne stocke pas inutilement le code en clair dans des documents accessibles à des personnes non autorisées.
+
+## partners
+
+Champs :
+- partnerId.
+- name.
+- logoPath.
+- status.
+- terms.
+- redemptionRules.
+- createdAt.
+- updatedAt.
+
+## partnerUsers
+
+Association entre les comptes des enseignes et leurs autorisations.
+
+## auditLogs
+
+Journal des opérations sensibles :
+- actorUid.
+- actionType.
+- resourceType.
+- resourceId.
+- createdAt.
+- result.
+- metadata pertinente.
+
+Ne stocke pas de secrets dans les journaux.
+
+## platformConfig
+
+Paramètres administratifs contrôlés :
+- catégories.
+- règles de fidélité.
+- seuils de coupons.
+- paramètres de modération.
+- paramètres fonctionnels.
+
+Les utilisateurs ordinaires ne doivent pas pouvoir modifier cette collection.
+
+---
+
+# 26. CLOUD FUNCTIONS À PRÉVOIR
+
+Créer des fonctions serveur pour les opérations sensibles.
+
+Exemples :
+- completeProfile.
+- awardSignupBonus.
+- awardFirstPublicationBonus.
+- awardDonationReward.
+- recordDonationInterest.
+- createConversation.
+- sendMessage.
+- reserveDonation.
+- cancelReservation.
+- confirmDonationReceived.
+- createLoyaltyConversion.
+- createCoupon.
+- assignCouponToPartner.
+- validateCoupon.
+- redeemCoupon.
+- createNotification.
+- processModerationReport.
+- aggregateAnalytics.
+- reconcileLoyaltyBalance.
+- handleAccountDeletion.
+
+Les noms sont indicatifs : adapte-les à l'architecture retenue.
+
+Chaque fonction doit :
+- Vérifier l'authentification.
+- Vérifier les autorisations.
+- Valider les entrées.
+- Appliquer les limites de fréquence.
+- Gérer les erreurs.
+- Protéger les opérations contre les doublons.
+- Utiliser les transactions appropriées.
+- Éviter de divulguer des données sensibles.
+- Enregistrer les opérations critiques.
+
+Les fonctions déclenchées par des événements doivent être idempotentes.
+
+Les tâches planifiées doivent être sécurisées et surveillées.
+
+---
+
+# 27. RÈGLES DE SÉCURITÉ FIRESTORE ET STORAGE
+
+Écris les règles Firebase réelles et adaptées au modèle de données.
+
+Ne déploie jamais de règles permissives du type :
+
+allow read, write: if true;
+
+Ne considère pas le frontend comme une barrière de sécurité.
+
+## Firestore
+
+Les utilisateurs doivent uniquement pouvoir lire les données publiques et les données privées auxquelles ils sont autorisés à accéder.
+
+Les utilisateurs ordinaires ne doivent pas pouvoir :
+- Modifier leur rôle.
+- Se déclarer administrateurs.
+- Modifier leur solde de pommes.
+- Créer librement des transactions de fidélité.
+- Modifier les compteurs.
+- Déclarer eux-mêmes un coupon utilisé.
+- Réserver un don appartenant à une autre personne.
+- Confirmer la réception d'un don réservé à quelqu'un d'autre.
+- Modifier l'historique d'une réservation.
+- Lire les conversations de tiers.
+- Lire les numéros de téléphone privés d'autres utilisateurs.
+- Modifier les règles de fidélité.
+
+Les règles doivent tenir compte de chaque type de document et de chaque sous-collection.
+
+## Cloud Storage
+
+Contrôler :
+- Les chemins.
+- Les types de fichiers.
+- Les tailles.
+- Les propriétaires.
+- Les participants aux conversations.
+- Les autorisations de lecture.
+- Les autorisations de suppression.
+
+Les images publiques des dons peuvent être accessibles selon une politique publique explicite.
+
+Les pièces jointes privées des conversations doivent rester privées.
+
+Ne rends pas l'intégralité du bucket public.
+
+## App Check
+
+Configure Firebase App Check lorsque cela est compatible.
+
+Protège les ressources et les fonctions prises en charge.
+
+Ne prétends pas que l'activation d'App Check remplace les règles de sécurité.
+
+## Secrets
+
+Aucun secret serveur, clé privée, jeton administratif ou identifiant sensible ne doit être inclus dans le frontend.
+
+Utilise des variables d'environnement et les mécanismes de gestion des secrets adaptés à Firebase.
+
+Documente les configurations requises.
+
+---
+
+# 28. PERFORMANCES ET CONNECTIVITÉ À MADAGASCAR
+
+La plateforme doit fonctionner correctement avec une connexion mobile parfois lente.
+
+Optimise :
+- Les images.
+- Les requêtes Firestore.
+- La taille des bundles JavaScript.
+- Le nombre de lectures.
+- Le nombre de listeners temps réel.
+- Les transitions de navigation.
+- Les formulaires.
+- Le chargement des tableaux de bord.
+
+Prévois :
+- Chargement progressif des images.
+- Pagination.
+- Mise en cache adaptée.
+- États de chargement.
+- Gestion des interruptions réseau.
+- Messages d'erreur compréhensibles.
+- Réessais contrôlés.
+- Prévention des doubles soumissions.
+
+Ne charge pas toutes les conversations ou toutes les publications en une seule requête.
+
+Ne lance pas plusieurs listeners temps réel inutiles.
+
+Pour les opérations sensibles, la validation côté serveur reste obligatoire même si le client dispose d'une copie locale des données.
+
+Une éventuelle prise en charge hors ligne ne doit jamais permettre de confirmer une réservation ou un coupon avant validation effective du serveur.
+
+---
+
+# 29. INTERNATIONALISATION ET EXPANSION AFRICAINE
+
+La première version est destinée à Madagascar.
+
+Prévois une architecture permettant d'ajouter ultérieurement :
+- D'autres pays.
+- D'autres monnaies de référence pour les partenaires.
+- D'autres langues.
+- D'autres structures administratives.
+- D'autres fournisseurs SMS.
+- D'autres partenaires.
+- D'autres règles locales.
+
+Langue initiale : français.
+
+Prévoir une architecture permettant d'ajouter le malgache.
+
+Ne mélange pas les textes de l'interface avec la logique métier.
+
+Utilise des fichiers de traduction ou un système d'internationalisation adapté.
+
+Prévois un modèle géographique extensible :
+- Pays.
+- Région.
+- District.
+- Commune.
+- Fokontany.
+
+Les niveaux doivent pouvoir varier selon le pays.
+
+Ne suppose pas que toutes les zones administratives possèdent des données fiables ou des coordonnées exactes.
+
+---
+
+# 30. CONFIDENTIALITÉ ET CONFORMITÉ
+
+Prévoir les mécanismes nécessaires à une gestion responsable des données personnelles.
+
+Inclure :
+- Politique de confidentialité.
+- Conditions d'utilisation.
+- Gestion des préférences.
+- Contrôle de visibilité du profil.
+- Protection des conversations.
+- Demande de suppression du compte.
+- Gestion des signalements.
+- Politique de conservation.
+- Journalisation des actions sensibles.
+- Accès limité aux données administratives.
+
+Concevoir le système en tenant compte de la réglementation malgache applicable à la protection des données personnelles et des obligations pertinentes dans les pays d'expansion.
+
+Ne prétends pas que la plateforme est juridiquement conforme sans vérification des textes applicables et des procédures effectivement mises en place.
+
+Évite la collecte de données excessives.
+
+Ne publie pas d'informations permettant de localiser précisément les membres.
+
+---
+
+# 31. TESTS AUTOMATISÉS
+
+Créer des tests pour les fonctionnalités essentielles.
+
+Utilise les outils compatibles avec l'environnement, notamment :
+- Vitest pour les tests unitaires.
+- React Testing Library pour les composants.
+- Firebase Emulator Suite pour les tests d'intégration.
+- Des tests de sécurité des règles Firestore et Storage.
+- Des tests de bout en bout si l'environnement le permet.
+
+## Tests obligatoires
+
+### Authentification
+- Création de compte.
+- Connexion.
+- Numéro déjà associé à un compte.
+- Numéro non vérifié.
+- Réinitialisation du mot de passe.
+- Association d'un compte Google.
+- Accès refusé à un compte non autorisé.
+
+### Publications
+- Création.
+- Modification par le propriétaire.
+- Refus de modification par un tiers.
+- Gestion de 20 images.
+- Rejet d'un fichier invalide.
+- Recherche.
+- Filtrage.
+- Archivage.
+
+### Intérêts
+- Enregistrement d'une consultation.
+- Prévention des doublons.
+- Comptage des utilisateurs uniques.
+- Refus de modification des compteurs par le client.
+
+### Réservations
+- Réservation valide.
+- Réservation concurrente.
+- Annulation par le donateur.
+- Annulation par le bénéficiaire.
+- Confirmation de réception par le bénéficiaire autorisé.
+- Refus de confirmation par un tiers.
+- Absence de double récupération.
+
+### Messagerie
+- Accès autorisé.
+- Refus d'accès aux conversations de tiers.
+- Envoi de message.
+- Pièce jointe autorisée.
+- Pièce jointe refusée.
+- Notifications.
+- Événements système générés par le backend.
+
+### Fidélité
+- Bonus d'inscription unique.
+- Bonus de profil complet unique.
+- Bonus de première publication unique.
+- Récompense aléatoire comprise entre 10 et 1000 pommes.
+- Rejet d'une tentative de modification du solde.
+- Prévention du double crédit.
+- Conversion de pommes atomique.
+
+### Coupons
+- Création.
+- Unicité du code.
+- Vérification du coupon.
+- Refus d'un coupon expiré.
+- Refus d'un coupon utilisé.
+- Validation concurrente.
+- Refus d'utilisation par un partenaire non autorisé.
+- Historique correct après utilisation.
+
+### Administration
+- Refus d'accès aux utilisateurs ordinaires.
+- Gestion des rôles.
+- Audit des opérations sensibles.
+
+---
+
+# 32. DONNÉES DE DÉMONSTRATION
+
+Si le projet a besoin de données pour démontrer l'interface, crée un mécanisme de données de démonstration clairement identifié.
+
+Les données de démonstration ne doivent pas être confondues avec les données réelles.
+
+Prévois éventuellement :
+- Des publications fictives.
+- Des catégories.
+- Des conversations de test.
+- Des utilisateurs de démonstration.
+- Des statistiques de démonstration.
+
+N'utilise pas de faux comptes présentés comme de vrais membres.
+
+N'attribue pas de vraies pommes ou de vrais coupons aux comptes de démonstration.
+
+Le mécanisme de démonstration doit pouvoir être désactivé avant le lancement public.
+
+---
+
+# 33. CRITÈRES D'ACCEPTATION DU PROJET
+
+Le projet ne sera considéré comme fonctionnel que si les points suivants ont été réalisés et testés.
+
+1. Un utilisateur peut créer un compte.
+2. Un utilisateur peut vérifier son numéro de téléphone.
+3. Un utilisateur peut compléter son profil.
+4. Les bonus de fidélité sont attribués selon les règles.
+5. Un utilisateur peut publier un don avec jusqu'à 20 images.
+6. Les publications sont consultables publiquement.
+7. Les visiteurs peuvent rechercher et filtrer les dons.
+8. Les clics et intérêts sont comptabilisés selon les règles définies.
+9. Un visiteur non connecté doit s'authentifier pour engager une interaction.
+10. Un bénéficiaire peut initier une conversation à partir d'une publication.
+11. Les messages sont transmis en temps réel.
+12. Les emojis fonctionnent.
+13. Les pièces jointes autorisées fonctionnent.
+14. Les appels audio et vidéo fonctionnent après configuration et tests des services nécessaires.
+15. Le donateur peut réserver son don pour un bénéficiaire.
+16. La publication affiche automatiquement le statut réservé.
+17. Le bénéficiaire reçoit une notification.
+18. Le donateur et le bénéficiaire peuvent annuler la réservation selon les règles.
+19. Le bénéficiaire autorisé peut confirmer la réception.
+20. Le don passe au statut récupéré après confirmation valide.
+21. Les trois tableaux de bord affichent les données réelles.
+22. Le système de Pommes est sécurisé.
+23. Les conversions sont atomiques.
+24. Les coupons sont générés et téléchargeables.
+25. Les coupons sont vérifiables par les partenaires autorisés.
+26. Un coupon utilisé ne peut pas être utilisé une seconde fois.
+27. Les classements sont calculés à partir de données réelles.
+28. La carte utilise des données géographiques disponibles et agrégées.
+29. L'administration est protégée.
+30. Les règles Firestore et Storage empêchent les accès non autorisés.
+31. L'interface est responsive.
+32. Les erreurs réseau sont correctement gérées.
+33. Les tests essentiels passent.
+34. Le projet dispose d'une documentation de déploiement.
+35. Aucune fonctionnalité annoncée comme opérationnelle n'est simplement simulée.
+
+---
+
+# 34. MÉTHODE DE DÉVELOPPEMENT
+
+Tu dois procéder de manière méthodique.
+
+Ne génère pas uniquement une interface statique en déclarant que l'application est terminée.
+
+## Phase 1 : architecture
+
+- Examiner les capacités de l'environnement.
+- Définir les composants techniques.
+- Établir les modèles de données.
+- Identifier les intégrations externes.
+- Créer la structure du projet.
+- Documenter les variables de configuration nécessaires.
+
+## Phase 2 : interface
+
+Construire les composants visuels communs :
+- En-tête.
+- Navigation.
+- Pied de page.
+- Cartes de dons.
+- Formulaires.
+- Modales.
+- Notifications.
+- Tableaux de bord.
+- États de chargement.
+
+## Phase 3 : backend et sécurité
+
+- Configurer Firebase.
+- Implémenter l'authentification.
+- Définir les règles Firestore.
+- Définir les règles Storage.
+- Créer les Cloud Functions.
+- Mettre en place les contrôles d'accès.
+- Configurer les secrets nécessaires.
+
+## Phase 4 : fonctionnalités principales
+
+Développer dans cet ordre :
+1. Authentification et profils.
+2. Publications et recherche.
+3. Intérêts et statistiques.
+4. Réservations.
+5. Messagerie.
+6. Notifications.
+7. Pommes.
+8. Coupons.
+9. Tableaux de bord.
+10. Carte géographique.
+11. Administration.
+12. Modération.
+
+## Phase 5 : validation
+
+- Exécuter les tests.
+- Vérifier les autorisations.
+- Tester les erreurs.
+- Vérifier les transitions de statut.
+- Contrôler les doublons.
+- Tester sur mobile.
+- Tester les parcours complets.
+
+## Phase 6 : déploiement
+
+- Documenter les services à activer.
+- Configurer les variables d'environnement.
+- Configurer les fournisseurs d'authentification.
+- Déployer les règles.
+- Déployer les fonctions.
+- Déployer le frontend.
+- Vérifier le fonctionnement en environnement de test.
+- Documenter le passage en production.
+
+Si une phase dépend d'un service non configuré, poursuis les tâches indépendantes et indique précisément ce qui reste à configurer.
+
+---
+
+# 35. RÈGLES DE TRAVAIL POUR L'IA FIREBASE
+
+Respecte strictement les consignes suivantes.
+
+1. Construis une véritable application, pas une simple maquette.
+2. Privilégie les fonctionnalités réellement opérationnelles.
+3. N'invente pas de données réelles.
+4. N'utilise pas de boutons décoratifs sans action.
+5. Ne stocke jamais de mot de passe en clair.
+6. Ne laisse pas le navigateur modifier les pommes ou les coupons.
+7. Ne permets pas de contourner les réservations.
+8. Ne permets pas de réutiliser un coupon.
+9. Ne rends pas les conversations publiques.
+10. Ne publie pas les coordonnées privées des utilisateurs.
+11. Ne crée pas de partenariats fictifs présentés comme officiels.
+12. Ne prétends pas qu'un SMS, un e-mail, un appel ou un message WhatsApp a été envoyé sans intégration fonctionnelle.
+13. N'utilise pas de clés secrètes dans le code frontend.
+14. Ne désactive pas les règles de sécurité pour simplifier le développement.
+15. N'abandonne pas une fonctionnalité simplement parce qu'elle est complexe : construis une intégration adaptée ou documente précisément les dépendances restantes.
+16. Ne remplace pas une vraie fonctionnalité par un simple message de succès.
+17. Ne réécris pas toute l'application à chaque modification.
+18. Préserve le code déjà fonctionnel.
+19. Corrige les erreurs détectées avant de déclarer une fonctionnalité terminée.
+20. Maintiens une documentation claire.
+
+Si tu dois choisir entre une fonctionnalité visuellement impressionnante mais non sécurisée et une fonctionnalité plus simple réellement fonctionnelle, privilégie la solution fonctionnelle et sécurisée.
+
+Si une exigence est techniquement impossible dans l'environnement actuel, explique pourquoi et propose l'architecture alternative la plus adaptée.
+
+---
+
+# 36. LIVRABLE FINAL
+
+À la fin du développement, fournis :
+
+1. Le code source complet.
+2. L'architecture du projet.
+3. La liste des fonctionnalités effectivement implémentées.
+4. La liste des fonctionnalités nécessitant une configuration externe.
+5. Les règles Firestore.
+6. Les règles Storage.
+7. Les Cloud Functions.
+8. Les modèles de données.
+9. Les index Firestore requis.
+10. Les tests automatisés.
+11. Les instructions de lancement local.
+12. Les instructions de configuration Firebase.
+13. Les instructions de déploiement.
+14. Les variables d'environnement requises.
+15. Les éventuelles dépendances payantes.
+16. Les points de sécurité à vérifier avant la mise en production.
+17. Les limites connues.
+18. Une liste des tests réussis et des tests non exécutés.
+
+Ne déclare pas un test réussi s'il n'a pas réellement été exécuté.
+
+Ne déclare pas l'application prête pour la production tant que les règles de sécurité, les configurations externes, les tests essentiels et les contrôles de sécurité n'ont pas été vérifiés.
+
+---
+
+# OBJECTIF FINAL
+
+Créer ZARAZARAO, une plateforme moderne et évolutive qui permet à Madagascar de développer une véritable culture du partage.
+
+L'expérience doit être agréable, la navigation intuitive, les publications faciles à consulter, la messagerie fiable et le système de fidélité transparent.
+
+Le résultat doit être suffisamment bien conçu pour commencer à Madagascar et évoluer ensuite vers une plateforme panafricaine.
+
+Commence par examiner les capacités de l'environnement Firebase disponible, puis construis l'application progressivement.
+
+Ta priorité est de produire un résultat cohérent, sécurisé, fonctionnel et maintenable, avec une interface professionnelle et une véritable logique métier.
+
+Ne te contente pas de décrire ce que tu pourrais faire.
+
+Commence à construire le projet.
