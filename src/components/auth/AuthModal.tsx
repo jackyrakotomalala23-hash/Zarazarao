@@ -114,6 +114,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (code === 'auth/too-many-requests') {
       return 'Trop de tentatives échouées. Veuillez patienter un instant avant de réessayer.';
     }
+    if (code === 'auth/unauthorized-domain') {
+      return 'Ce domaine n\'est pas autorisé dans les paramètres Firebase. Veuillez vous connecter avec votre e-mail et mot de passe ci-dessous.';
+    }
     if (message.includes('permission-denied') || message.includes('Missing or insufficient permissions')) {
       return 'Erreur de permissions lors de l’accès à la base de données.';
     }
@@ -296,7 +299,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 )}
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2" translate="no">
                 {mode === 'signup' && 'Créer mon compte'}
                 {mode === 'signin' && 'Se connecter'}
                 {mode === 'forgot' && 'Mot de passe oublié'}
@@ -865,7 +868,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     ) : (
                       <>
                         <ShieldCheck className="w-5 h-5" />
-                        <span>{mode === 'signup' ? 'Créer mon compte (+10 pommes)' : 'Se connecter'}</span>
+                        <span translate="no">{mode === 'signup' ? 'Créer mon compte (+10 pommes)' : 'Se connecter'}</span>
                       </>
                     )}
                   </button>
