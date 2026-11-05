@@ -65,11 +65,11 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex flex-col items-center cursor-pointer group shrink-0 select-none py-0.5"
             title="Zarazarao Madagascar - Accueil"
           >
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:scale-105 transition-transform p-0.5 overflow-hidden">
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:scale-105 transition-transform overflow-hidden">
               <img 
                 src="/assets/aistudio/image_2d91093c.png" 
                 alt="Zarazarao Logo" 
-                className="w-full h-full object-contain dark:invert"
+                className="w-full h-full object-cover mix-blend-multiply dark:invert dark:mix-blend-screen"
               />
             </div>
             <div className="flex items-center gap-0.5 -mt-0.5">

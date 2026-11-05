@@ -142,11 +142,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-400/70 gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center p-0.5 overflow-hidden">
+            <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center overflow-hidden">
               <img 
                 src="/assets/aistudio/image_2d91093c.png" 
                 alt="Zarazarao Logo" 
-                className="w-full h-full object-contain dark:invert"
+                className="w-full h-full object-cover mix-blend-multiply dark:invert dark:mix-blend-screen"
               />
             </div>
             <span>© {new Date().getFullYear()} ZARAZARAO • {t('footer.tagline')}</span>
