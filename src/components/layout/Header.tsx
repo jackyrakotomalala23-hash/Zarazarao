@@ -65,12 +65,8 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex flex-col items-center cursor-pointer group shrink-0 select-none py-0.5"
             title="Zarazarao Madagascar - Accueil"
           >
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center bg-[var(--bg-card)] backdrop-blur-xs border border-[var(--border-color)] shadow-2xs group-hover:scale-105 transition-transform p-0.5 overflow-hidden">
-              <img 
-                src="/assets/aistudio/image_2d91093c.png" 
-                alt="Zarazarao Logo" 
-                className="w-full h-full object-contain"
-              />
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-sm sm:text-base shadow-md border border-white/20 group-hover:scale-105 transition-transform">
+              Z
             </div>
             <div className="flex items-center gap-0.5 -mt-0.5">
               <span 

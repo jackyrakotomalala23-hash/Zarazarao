@@ -142,12 +142,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-400/70 gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] shadow-sm flex items-center justify-center p-0.5 overflow-hidden">
-              <img 
-                src="/assets/aistudio/image_2d91093c.png" 
-                alt="Zarazarao Logo" 
-                className="w-full h-full object-contain"
-              />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-sm shadow-md border border-white/20">
+              Z
             </div>
             <span>© {new Date().getFullYear()} ZARAZARAO • {t('footer.tagline')}</span>
           </div>
