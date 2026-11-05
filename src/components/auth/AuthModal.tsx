@@ -115,7 +115,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return 'Trop de tentatives échouées. Veuillez patienter un instant avant de réessayer.';
     }
     if (code === 'auth/unauthorized-domain') {
-      return 'Ce domaine n\'est pas autorisé dans les paramètres Firebase. Veuillez vous connecter avec votre e-mail et mot de passe ci-dessous.';
+      return 'Domaine non autorisé par Firebase sur Vercel (zarazarao.vercel.app). Solution : Rendez-vous dans la console Firebase > Authentication > Paramètres > Domaines autorisés, et ajoutez "zarazarao.vercel.app". Vous pouvez également utiliser la connexion par e-mail / mot de passe.';
     }
     if (message.includes('permission-denied') || message.includes('Missing or insufficient permissions')) {
       return 'Erreur de permissions lors de l’accès à la base de données.';
@@ -617,6 +617,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
+                {/* Vercel Domain Tip */}
+                <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-2xl text-[11px] text-amber-900 leading-relaxed">
+                  <span className="font-bold">💡 Note pour Vercel (zarazarao.vercel.app) :</span> Pour activer Google sur votre domaine, ajoutez <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">zarazarao.vercel.app</code> dans la <span className="font-bold">Console Firebase &gt; Authentication &gt; Paramètres &gt; Domaines autorisés</span>. La connexion par e-mail / mot de passe fonctionne immédiatement.
+                </div>
+
                 {/* Fast Google Auth */}
                 <button
                   type="button"
