@@ -109,9 +109,14 @@ export const DonationDetailPage: React.FC<DonationDetailPageProps> = ({
         currentUser.uid,
         userProfile?.displayName || currentUser.displayName || 'Bénéficiaire'
       );
-      onNavigate('messages', { conversationId: conv.id });
-    } catch (err) {
+      if (conv && conv.id) {
+        onNavigate('messages', { conversationId: conv.id });
+      } else {
+        alert("Impossible de créer la discussion pour le moment. Veuillez réessayer.");
+      }
+    } catch (err: any) {
       console.error('Failed to start chat:', err);
+      alert("Une erreur s'est produite lors de l'ouverture de la messagerie : " + (err?.message || 'Erreur réseau'));
     } finally {
       setInitiatingChat(false);
     }

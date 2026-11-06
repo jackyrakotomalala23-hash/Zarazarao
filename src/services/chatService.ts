@@ -14,6 +14,7 @@ import {
 import { db } from '@/config/firebase';
 import { Conversation, Donation, Message } from '@/types';
 import { handleFirestoreError, OperationType } from './firestoreErrorHandler';
+import { sanitizeForFirestore } from './donationService';
 
 export const chatService = {
   // Get or initiate a conversation between donor and potential beneficiary
@@ -32,18 +33,18 @@ export const chatService = {
       }
 
       const now = new Date().toISOString();
-      const newConv: Conversation = {
+      const rawConv: Conversation = {
         id: conversationId,
         donationId: donation.id,
-        donationTitle: donation.title,
-        donationImage: donation.primaryImageUrl || donation.imageUrls[0] || '',
-        donorUid: donation.ownerUid,
-        donorName: donation.ownerDisplayName,
-        beneficiaryUid,
-        beneficiaryName,
-        participantUids: [donation.ownerUid, beneficiaryUid],
+        donationTitle: donation.title || 'Donation',
+        donationImage: donation.primaryImageUrl || (donation.imageUrls && donation.imageUrls[0]) || '',
+        donorUid: donation.ownerUid || '',
+        donorName: donation.ownerDisplayName || 'Donateur',
+        beneficiaryUid: beneficiaryUid || '',
+        beneficiaryName: beneficiaryName || 'Bénéficiaire',
+        participantUids: [donation.ownerUid, beneficiaryUid].filter(Boolean),
         status: 'ACTIVE',
-        lastMessagePreview: `Discussion initiée pour : ${donation.title}`,
+        lastMessagePreview: `Discussion initiée pour : ${donation.title || 'le don'}`,
         lastMessageAt: now,
         unreadCountDonor: 0,
         unreadCountBeneficiary: 0,
@@ -51,18 +52,20 @@ export const chatService = {
         updatedAt: now
       };
 
+      const newConv = sanitizeForFirestore(rawConv);
       await setDoc(convRef, newConv);
 
       // Create initial system message
       await this.sendSystemMessage(
         conversationId,
         'DONATION_AVAILABLE',
-        `👋 ${beneficiaryName} a manifesté son intérêt pour le don « ${donation.title} ». Vous pouvez échanger ici sur les détails de remise.`
+        `👋 ${beneficiaryName || 'Un membre'} a manifesté son intérêt pour le don « ${donation.title} ». Vous pouvez échanger ici sur les détails de remise.`
       );
 
       return newConv;
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `conversations/${conversationId}`);
+      console.error('Error in getOrCreateConversation:', error);
+      return handleFirestoreError(error, OperationType.WRITE, `conversations/${conversationId}`);
     }
   },
 
@@ -118,7 +121,7 @@ export const chatService = {
     const convRef = doc(db, 'conversations', conversationId);
     const now = new Date().toISOString();
 
-    const newMessage: Message = {
+    const rawMessage: Message = {
       id: messageId,
       conversationId,
       senderUid,
@@ -127,6 +130,7 @@ export const chatService = {
       mediaUrls: mediaUrls || [],
       createdAt: now
     };
+    const newMessage = sanitizeForFirestore(rawMessage);
 
     try {
       await setDoc(msgRef, newMessage);

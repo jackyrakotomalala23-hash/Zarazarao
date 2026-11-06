@@ -14,11 +14,14 @@ import {
   Building2,
   CheckCircle2,
   SlidersHorizontal,
-  ChevronRight
+  ChevronRight,
+  Users,
+  UserCheck
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Donation } from '@/types';
+import { Donation, UserProfile } from '@/types';
 import { donationService } from '@/services/donationService';
+import { userService } from '@/services/userService';
 import { forceSeedMoreSampleDonations } from '@/services/seedService';
 import { CATEGORIES, MADAGASCAR_CITIES } from '@/config/constants';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -46,6 +49,7 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
   const [seedSuccessNotice, setSeedSuccessNotice] = useState<string | null>(null);
 
   // Filters state
+  const [activeTab, setActiveTab] = useState<'donations' | 'users'>('donations');
   const [search, setSearch] = useState(initialFilters.search || '');
   const [selectedCategory, setSelectedCategory] = useState(initialFilters.category || 'all');
   const [selectedCity, setSelectedCity] = useState(initialFilters.city || 'all');
@@ -54,6 +58,11 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
   const [handoverMode, setHandoverMode] = useState('all');
   const [minCondition, setMinCondition] = useState(0);
   const [sortBy, setSortBy] = useState<'recent' | 'views' | 'condition'>('recent');
+
+  // User search state
+  const [userSearch, setUserSearch] = useState('');
+  const [usersList, setUsersList] = useState<UserProfile[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
 
   // Compute available fokontanys based on selected city
   const currentCityObj = useMemo(() => {
@@ -83,9 +92,25 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
     }
   };
 
+  const fetchUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const list = await userService.searchUsers(userSearch);
+      setUsersList(list);
+    } catch (err) {
+      console.error('Failed to search users:', err);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchFilteredDonations();
-  }, [selectedCategory, selectedCity, selectedFokontany, statusFilter, handoverMode, minCondition, sortBy]);
+    if (activeTab === 'donations') {
+      fetchFilteredDonations();
+    } else {
+      fetchUsers();
+    }
+  }, [activeTab, selectedCategory, selectedCity, selectedFokontany, statusFilter, handoverMode, minCondition, sortBy]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,8 +204,117 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
         </div>
       )}
 
-      {/* Main Search Bar & Sort Bar */}
-      <div className="space-y-4 bg-white p-4 sm:p-6 rounded-3xl border border-emerald-100 shadow-sm">
+      {/* Search Mode Tabs: Donations vs Members */}
+      <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
+        <button
+          onClick={() => setActiveTab('donations')}
+          className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 cursor-pointer ${
+            activeTab === 'donations'
+              ? 'bg-emerald-800 text-white shadow-xs'
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+          }`}
+        >
+          <Package className="w-4 h-4" />
+          <span>Catalogue des dons & objets</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('users')}
+          className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 cursor-pointer ${
+            activeTab === 'users'
+              ? 'bg-emerald-800 text-white shadow-xs'
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+          }`}
+        >
+          <Users className="w-4 h-4 text-emerald-500" />
+          <span>Rechercher des membres (Utilisateurs)</span>
+        </button>
+      </div>
+
+      {activeTab === 'users' ? (
+        <div className="space-y-6">
+          <div className="bg-white p-4 sm:p-6 rounded-3xl border border-emerald-100 shadow-sm space-y-4">
+            <h2 className="text-base font-extrabold text-gray-900 flex items-center gap-2">
+              <Users className="w-5 h-5 text-emerald-700" />
+              Rechercher des donateurs et membres par nom ou ville
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1 relative">
+                <Search className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && fetchUsers()}
+                  placeholder="Tapez un prénom, un nom de donateur ou une ville (ex: Mialy, Fidy, Antananarivo)..."
+                  className="w-full pl-11 pr-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500 focus:bg-white shadow-2xs transition-all"
+                />
+              </div>
+              <button
+                onClick={fetchUsers}
+                className="px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-xs transition-colors cursor-pointer"
+              >
+                Rechercher membre
+              </button>
+            </div>
+          </div>
+
+          {usersLoading ? (
+            <div className="py-16 flex justify-center">
+              <ZaraLoader size="md" text="Recherche des membres et donateurs..." />
+            </div>
+          ) : usersList.length === 0 ? (
+            <div className="bg-white rounded-3xl border border-gray-200 p-12 text-center space-y-3 max-w-md mx-auto">
+              <Users className="w-12 h-12 text-gray-400 mx-auto" />
+              <h3 className="text-base font-bold text-gray-900">Aucun membre trouvé</h3>
+              <p className="text-xs text-gray-500">
+                Essayez avec une autre orthographe ou réinitialisez la recherche.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {usersList.map((user) => (
+                <div key={user.uid} className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs hover:border-emerald-500 hover:shadow-md transition-all flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName}`}
+                      alt={user.displayName}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-emerald-100"
+                    />
+                    <div>
+                      <h4 className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
+                        {user.displayName}
+                        {user.role === 'admin' && (
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-800 text-[10px] font-black rounded-full">
+                            Admin
+                          </span>
+                        )}
+                      </h4>
+                      <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                        {user.city || 'Madagascar'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setSearch(user.displayName);
+                      setActiveTab('donations');
+                      fetchFilteredDonations();
+                    }}
+                    className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-colors cursor-pointer shrink-0"
+                  >
+                    Voir ses dons
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Main Search Bar & Sort Bar */}
+          <div className="space-y-4 bg-white p-4 sm:p-6 rounded-3xl border border-emerald-100 shadow-sm">
         <div className="flex flex-col md:flex-row gap-3">
           <form onSubmit={handleSearchSubmit} className="flex-1 relative">
             <Search className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" />
@@ -474,6 +608,8 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
             );
           })}
         </div>
+      )}
+        </>
       )}
 
     </div>
