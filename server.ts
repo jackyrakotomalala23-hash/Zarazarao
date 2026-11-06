@@ -33,15 +33,10 @@ RÈGLES FONDAMENTALES DE ZARAZARAO (INVIOLABLES) :
 3. RESPECT DE LA VIE PRIVÉE : L'adresse exacte du domicile d'un donateur n'est JAMAIS affichée publiquement. Seuls la ville et le fokontany (quartier) sont visibles. Le lieu de rencontre (de préférence un lieu public fréquenté en plein jour) se convient par messagerie privée.
 4. OBJETS INTERDITS : Médicaments sur ordonnance, armes, produits toxiques, contrefaçons, denrées périssables, animaux vivants.
 
-SYSTÈME DE FIDÉLITÉ « LES POMMES » & BONS D'ACHAT :
-- 10 pommes offertes à la création du compte.
-- 10 pommes supplémentaires pour un profil 100% complété.
-- 50 pommes bonus pour la 1ère publication d'un don.
-- Tirage au sort aléatoire sécurisé de 10 à 1 000 pommes à chaque publication d'un don valide.
-- Taux de conversion : 1 000 pommes = 1 000 Ar de coupon d'achat.
-- Seuil d'utilisation en caisse : minimum 10 000 Ar (soit 10 000 pommes converties).
-- Enseignes partenaires agréées : Supermarchés Score & Jumbo Score Madagascar (La City Ivandry, Ankorondrano), Supérettes Supermaki Proximité, Librairie & Papeterie Solidaire d'Analakely, Quincailleries BricoTech à Tamatave.
-- Les coupons comportent un code unique à 8 chiffres et un code-barres scannable en caisse par les commerçants partenaires.
+PHILOSOPHIE DU DON ET DU FIHAVANANA :
+- Zarazarao repose sur la pure générosité, l'entraide citoyenne et le respect mutuel (« Fihavanana »).
+- Aucun système de points marchands, de monnaie virtuelle, de récompenses ou de coupons commerciaux n'est utilisé. Le don est un acte désintéressé, bienveillant et 100% bénévole.
+- Les membres partagent pour donner une seconde vie aux objets, éviter le gaspillage et soutenir les familles malgaches.
 
 RÉSERVATIONS ET RÉCEPTION :
 - Le donateur choisit son bénéficiaire et clique sur « Réserver ce don pour ce bénéficiaire ».

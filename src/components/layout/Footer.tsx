@@ -32,9 +32,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               {t('footer.badgeFree')}
             </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-xs font-semibold text-amber-200">
-              <span>🍎</span>
-              {t('footer.badgeLoyalty')}
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-800/80 border border-emerald-700 text-xs font-semibold text-emerald-200">
+              <Heart className="w-4 h-4 text-rose-400" />
+              100% Solidaire & Fihavanana
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </div>
 
           <div className="space-y-3">
-            <h4 className="font-bold text-white text-base">{t('footer.loyalty')}</h4>
+            <h4 className="font-bold text-white text-base">Esprit de Partage</h4>
             <ul className="space-y-2 text-emerald-300/80 text-xs sm:text-sm">
               <li>
                 <button onClick={() => onNavigate('how-it-works')} className="hover:text-white transition-colors">
@@ -82,16 +82,18 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </button>
               </li>
               <li>
-                <span className="text-emerald-400 font-medium">{t('home.appleValueRatio')}</span>
+                <button onClick={() => onNavigate('rules')} className="hover:text-white transition-colors">
+                  {t('footer.charter')}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('publish')} className="hover:text-white transition-colors">
+                  Offrir un don gratuit
+                </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('dashboard')} className="hover:text-white transition-colors">
                   {t('nav.dashboard')}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('store-verify')} className="hover:text-white transition-colors">
-                  {t('footer.partnerSpace')}
                 </button>
               </li>
             </ul>
@@ -135,6 +137,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="text-xs text-emerald-200 flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-amber-400" />
               contact@zarazarao.mg
+            </div>
+            <div>
+              <button 
+                onClick={() => onNavigate('contact')}
+                className="mt-2 px-3 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl border border-emerald-700 transition-colors inline-flex items-center gap-1"
+              >
+                Formulaire de contact
+              </button>
             </div>
           </div>
         </div>

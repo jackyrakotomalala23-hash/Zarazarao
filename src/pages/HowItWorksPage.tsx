@@ -74,9 +74,9 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.2 }}
           whileHover={{ y: -6 }}
-          className="bg-white/90 backdrop-blur-xs rounded-3xl p-6 border border-gray-200/80 hover:border-amber-500 shadow-sm hover:shadow-xl transition-all space-y-3 relative overflow-hidden"
+          className="bg-white/90 backdrop-blur-xs rounded-3xl p-6 border border-gray-200/80 hover:border-emerald-500 shadow-sm hover:shadow-xl transition-all space-y-3 relative overflow-hidden"
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center font-black text-sm shadow-md">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center font-black text-sm shadow-md">
             3
           </div>
           <h3 className="text-base font-bold text-gray-900">{t('how.step3.title')}</h3>
@@ -87,25 +87,25 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
 
       </div>
 
-      {/* Loyalty Apple Banner with Vibrant Gradient */}
+      {/* Solidarity & Fihavanana Banner */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         className="rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden space-y-4 border border-white/20"
-        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #065f46 50%, #f59e0b 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 50%, #0f766e 100%)' }}
       >
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🍎</span>
+          <span className="text-2xl">🇲🇬</span>
           <span className="text-xs font-black uppercase tracking-widest text-amber-300">
-            {t('footer.loyalty')}
+            Esprit Fihavanana & Partage
           </span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-black text-white">
-          Convertissez vos Pommes en vrais bons d’achat (1000 Pommes = 1000 Ar)
+          La solidarité Malagasy au cœur de chaque don
         </h2>
         <p className="text-xs sm:text-sm text-emerald-100 leading-relaxed max-w-2xl">
-          Chaque fois que vous offrez un objet ou complétez votre profil, vous accumulez des Pommes solidaires. Dès 1000 Pommes, générez un bon d’achat sécurisé avec code-barres et code à 8 chiffres utilisable directement en caisse de nos supermarchés et enseignes partenaires à Madagascar.
+          Sur Zarazarao, chaque geste compte. Donner ce qui ne vous sert plus permet d'équiper des familles, de désencombrer votre intérieur et de limiter les déchets sur notre belle île de Madagascar. Zéro frais, zéro commission, 100% gratuit et bienveillant.
         </p>
         <div className="pt-2 flex flex-wrap gap-3">
           <button

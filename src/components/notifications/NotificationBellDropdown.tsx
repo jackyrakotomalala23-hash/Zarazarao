@@ -78,8 +78,6 @@ export const NotificationBellDropdown: React.FC<NotificationBellDropdownProps> =
       onNavigate('donation-detail', { id: notif.resourceId });
     } else if (notif.resourceType === 'conversation' && notif.resourceId) {
       onNavigate('messages', { conversationId: notif.resourceId });
-    } else if (notif.type === 'loyalty' || notif.type === 'coupon') {
-      onNavigate('dashboard', { tab: 'apples' });
     } else {
       onNavigate('dashboard', { tab: 'overview' });
     }
@@ -99,9 +97,6 @@ export const NotificationBellDropdown: React.FC<NotificationBellDropdownProps> =
         return <CheckCheck className="w-4 h-4 text-amber-600" />;
       case 'message':
         return <MessageSquare className="w-4 h-4 text-blue-600" />;
-      case 'loyalty':
-      case 'coupon':
-        return <Gift className="w-4 h-4 text-purple-600" />;
       default:
         return <Sparkles className="w-4 h-4 text-emerald-700" />;
     }

@@ -21,6 +21,8 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { chatService } from '@/services/chatService';
 import { donationService } from '@/services/donationService';
+import { reviewService } from '@/services/reviewService';
+import { EmojiPickerModal } from '@/components/common/EmojiPickerModal';
 import { Conversation, Donation, Message } from '@/types';
 
 interface MessagingPageProps {
@@ -224,6 +226,31 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
     }
   };
 
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [emojiModalOpen, setEmojiModalOpen] = useState(false);
+
+  // Donor marks donation as delivered
+  const handleMarkAsDelivered = async () => {
+    if (!linkedDonation || !activeConv) return;
+    const confirmed = window.confirm(`Marquer ce don (« ${linkedDonation.title} ») comme livré et remis ?`);
+    if (!confirmed) return;
+
+    try {
+      await donationService.markAsDelivered(
+        linkedDonation.id,
+        currentUser.uid,
+        activeConv.id
+      );
+      const updated = await donationService.getDonationById(linkedDonation.id);
+      setLinkedDonation(updated);
+    } catch (err: any) {
+      alert(getCleanErrorMessage(err));
+    }
+  };
+
   // Beneficiary confirms reception
   const handleConfirmReceived = async () => {
     if (!linkedDonation || !activeConv) return;
@@ -240,6 +267,30 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
       );
       const updated = await donationService.getDonationById(linkedDonation.id);
       setLinkedDonation(updated);
+      setReviewModalOpen(true);
+    } catch (err: any) {
+      alert(getCleanErrorMessage(err));
+    }
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!linkedDonation || !activeConv) return;
+    try {
+      await reviewService.addReview({
+        donorUid: activeConv.donorUid,
+        beneficiaryUid: currentUser.uid,
+        beneficiaryName: userProfile?.displayName || currentUser.displayName || 'Bénéficiaire',
+        donationId: linkedDonation.id,
+        donationTitle: linkedDonation.title,
+        rating,
+        comment
+      });
+      setReviewSubmitted(true);
+      setTimeout(() => {
+        setReviewModalOpen(false);
+        setReviewSubmitted(false);
+      }, 1500);
     } catch (err: any) {
       alert(getCleanErrorMessage(err));
     }
@@ -396,6 +447,16 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
                   </button>
                 )}
 
+                {isDonor && isReserved && (
+                  <button
+                    onClick={handleMarkAsDelivered}
+                    className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Marquer comme livré</span>
+                  </button>
+                )}
+
                 {isBeneficiary && isReserved && (
                   <button
                     onClick={handleConfirmReceived}
@@ -403,6 +464,15 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-300" />
                     <span>Oui, j'ai reçu le don</span>
+                  </button>
+                )}
+
+                {isRecovered && isBeneficiary && (
+                  <button
+                    onClick={() => setReviewModalOpen(true)}
+                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                  >
+                    ⭐ Noter le donateur
                   </button>
                 )}
 
@@ -472,6 +542,15 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
 
             {/* Input Bar */}
             <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-gray-200 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setEmojiModalOpen(true)}
+                className="p-2.5 text-gray-500 hover:text-emerald-700 hover:bg-gray-100 rounded-xl transition-colors shrink-0"
+                title="Ouvrir la banque d'émojis"
+              >
+                <Smile className="w-5 h-5" />
+              </button>
+
               <input
                 type="text"
                 value={inputText}
@@ -483,7 +562,7 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
               <button
                 type="submit"
                 disabled={!inputText.trim() || sending}
-                className="p-3 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 text-white rounded-2xl shadow-xs transition-colors cursor-pointer"
+                className="p-3 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 text-white rounded-2xl shadow-xs transition-colors cursor-pointer shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -564,6 +643,78 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* Review Modal */}
+      {reviewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-gray-100">
+            {reviewSubmitted ? (
+              <div className="text-center py-8 space-y-3">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto text-2xl">
+                  ⭐
+                </div>
+                <h3 className="text-lg font-black text-gray-900">Merci pour votre avis !</h3>
+                <p className="text-xs text-gray-600">Votre évaluation a bien été publiée sur le profil du donateur.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitReview} className="space-y-4">
+                <div className="text-center space-y-1">
+                  <h3 className="text-lg font-black text-gray-900">Évaluer le donateur</h3>
+                  <p className="text-xs text-gray-500">Partagez votre ressenti sur cet échange solidaire Fihavanana.</p>
+                </div>
+
+                <div className="flex justify-center gap-2 py-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      type="button"
+                      key={star}
+                      onClick={() => setRating(star)}
+                      className={`text-3xl transition-transform hover:scale-110 ${star <= rating ? 'text-amber-400' : 'text-gray-300'}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-700">Commentaire (public sur le profil) :</label>
+                  <textarea
+                    rows={4}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Ex: Personne très ponctuelle, aimable et généreuse. Misaotra betsaka !"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium resize-none"
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setReviewModalOpen(false)}
+                    className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-colors"
+                  >
+                    Ignorer
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
+                  >
+                    Publier l'avis
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Emoji Picker Bank Modal */}
+      <EmojiPickerModal
+        isOpen={emojiModalOpen}
+        onClose={() => setEmojiModalOpen(false)}
+        onSelectEmoji={handleQuickEmoji}
+      />
 
     </div>
   );

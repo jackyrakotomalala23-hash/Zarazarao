@@ -41,7 +41,7 @@ export const ZaraBotChatbot: React.FC = () => {
     {
       id: 'welcome',
       role: 'model',
-      text: t('bot.greeting', "Manao ahoana ! Je suis ZaraBot, votre conseiller Fihavanana sur Zarazarao Madagascar.\n\nJe peux vous renseigner sur les dons, les règles, les pommes et les quartiers (fokontanys).\n\nComment puis-je vous aider aujourd'hui ?"),
+      text: t('bot.greeting', "Manao ahoana ! Je suis ZaraBot, votre conseiller Fihavanana sur Zarazarao Madagascar.\n\nJe peux vous renseigner sur les dons gratuits, l'esprit d'entraide Fihavanana et les quartiers (fokontanys).\n\nComment puis-je vous aider aujourd'hui ?"),
       source: 'knowledge_base',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
@@ -139,7 +139,7 @@ export const ZaraBotChatbot: React.FC = () => {
       const fallbackMatch = findBestKnowledgeMatch(userText);
       const fallbackText = fallbackMatch 
         ? fallbackMatch.item.answer 
-        : "Sur Zarazarao, chaque don est 100% gratuit ! Vous pouvez chercher des dons par quartier (fokontany), discuter avec le donateur en messagerie privée, et convertir vos Pommes accumulées en bons d'achat de 10 000 Ar utilisables chez Score et Supermaki.";
+        : "Sur Zarazarao, chaque don est 100% gratuit ! Vous pouvez chercher des dons par quartier (fokontany), discuter avec le donateur en messagerie privée et convenir d'un rendez-vous bienveillant et sécurisé.";
 
       setMessages((prev) => [
         ...prev,
@@ -162,7 +162,7 @@ export const ZaraBotChatbot: React.FC = () => {
 
   const QUICK_PROMPTS = [
     t('bot.quickQ1', 'Comment publier un don ?'),
-    t('bot.quickQ2', 'Comment échanger des pommes ?'),
+    t('bot.quickQ2', 'Comment récupérer un don ?'),
     t('bot.quickQ3', 'Règles de sécurité à Madagascar'),
   ];
 

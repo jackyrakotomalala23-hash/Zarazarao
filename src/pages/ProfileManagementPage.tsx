@@ -469,14 +469,14 @@ export const ProfileManagementPage: React.FC<ProfileManagementPageProps> = ({
             </div>
           </div>
 
-          {/* Right Action & Apples Count Badge */}
+          {/* Right Action */}
           <div className="flex items-center gap-3 shrink-0 self-center sm:self-end">
-            <div className="bg-amber-50 border border-amber-200 p-3 rounded-2xl flex items-center gap-3">
-              <span className="text-3xl">🍎</span>
+            <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl flex items-center gap-3">
+              <span className="text-3xl">🤝</span>
               <div>
-                <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">Solde Solidaire</div>
-                <div className="text-lg font-black text-emerald-950">
-                  {userProfile.applesCount.toLocaleString('fr-FR')} pommes
+                <div className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Esprit Fihavanana</div>
+                <div className="text-sm font-black text-emerald-950">
+                  100% Bénévole
                 </div>
               </div>
             </div>

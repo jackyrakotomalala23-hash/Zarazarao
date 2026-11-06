@@ -140,7 +140,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAuthModal 
                 </div>
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-amber-300" />
-                  <span>{t('home.loyaltyTrust', 'Pommes & bons d\'achat fidélité')}</span>
+                  <span>{t('home.loyaltyTrust', 'Esprit Fihavanana & Entraide')}</span>
                 </div>
               </div>
 
@@ -245,21 +245,21 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAuthModal 
               color: 'var(--text-primary)'
             }}
           >
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-500/15 text-purple-800 dark:text-purple-200 flex items-center justify-center shrink-0">
-              <span className="text-base sm:text-2xl">🍎</span>
+            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div className="min-w-0">
               <div 
                 className="text-xs sm:text-xl font-black tracking-tight leading-snug truncate"
                 style={{ color: 'var(--text-primary)' }}
               >
-                1000 = 1000 Ar
+                100% Solidaire
               </div>
               <div 
                 className="text-[10px] sm:text-xs font-semibold leading-tight truncate mt-0.5"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                {t('home.partnerCoupons', 'Coupons magasins partenaires')}
+                {t('home.partnerCoupons', 'Entraide & Zéro Déchet')}
               </div>
             </div>
           </motion.div>
@@ -296,7 +296,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAuthModal 
             <Package className="w-12 h-12 text-gray-400 mx-auto" />
             <h3 className="text-lg font-bold text-[var(--text-primary)]">{t('home.noDonationsYet', 'Aucun don publié pour le moment')}</h3>
             <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
-              {t('home.beFirstDonor', 'Soyez le premier citoyen malgache à proposer un objet gratuit sur Zarazarao et gagnez jusqu\'à 1000 pommes !')}
+              {t('home.beFirstDonor', 'Soyez le premier citoyen malgache à proposer un objet gratuit sur Zarazarao et partagez l\'esprit de générosité !')}
             </p>
             <button
               onClick={() => onNavigate('publish')}
@@ -425,7 +425,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAuthModal 
         </div>
       </section>
 
-      {/* 5. HOW LOYALTY APPLES & COUPONS WORK (FULL MULTI-LANGUAGE TRANSLATION) */}
+      {/* 5. L'ESPRIT DU DON & DU FIHAVANANA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
@@ -436,84 +436,78 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAuthModal 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-7 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-[var(--text-primary)] text-xs font-bold">
-                <span>🍎</span>
-                {t('home.loyaltyProgTitle', 'Le Programme de Fidélité Solidaire Zarazarao')}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold">
+                <span>🇲🇬</span>
+                {t('home.loyaltyProgTitle', 'L\'Esprit du Don & du Fihavanana Malagasy')}
               </div>
 
               <h2 className="text-2xl sm:text-4xl font-black text-[var(--text-primary)] leading-tight">
-                {t('home.earnApplesTitle', 'Gagnez des Pommes pour chaque geste de don, convertissez en réductions en magasin !')}
+                {t('home.earnApplesTitle', 'Donner pour faire grandir notre communauté, avec le cœur et sans rien attendre en retour')}
               </h2>
 
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                {t('home.earnApplesDesc', 'Sur Zarazarao, le don est 100% gratuit entre particuliers. Pour vous remercier de désencombrer et d\'aider vos voisins, la plateforme vous attribue des pommes virtuelles :')}
+                {t('home.earnApplesDesc', 'Sur Zarazarao, chaque don est un geste de pure générosité citoyenne. En offrant ce dont vous ne vous servez plus, vous illuminez le quotidien d\'un voisin, d\'une famille ou d\'un étudiant à Madagascar :')}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <div className="glass-card p-3.5 rounded-xl shadow-2xs">
                   <div className="font-bold text-sm text-[var(--text-primary)] flex items-center gap-1.5">
-                    <span>🎉</span> {t('home.bonusSignup', 'Inscription : +10 pommes')}
+                    <span>🎁</span> {t('home.bonusSignup', '100% Gratuit & Désintéressé')}
                   </div>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusSignupSub', 'Créditées automatiquement dès la création de votre compte.')}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusSignupSub', 'Aucun frais, aucune transaction financière. Un simple geste de cœur.')}</p>
                 </div>
 
                 <div className="glass-card p-3.5 rounded-xl shadow-2xs">
                   <div className="font-bold text-sm text-[var(--text-primary)] flex items-center gap-1.5">
-                    <span>📝</span> {t('home.bonusProfile', 'Profil complété : +10 pommes')}
+                    <span>🌿</span> {t('home.bonusProfile', 'Écologie & Seconde Vie')}
                   </div>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusProfileSub', 'Nom, photo, ville, fokontany et numéro vérifié.')}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusProfileSub', 'Donner au lieu de jeter : un acte solidaire qui protège notre belle île.')}</p>
                 </div>
 
                 <div className="glass-card p-3.5 rounded-xl shadow-2xs">
                   <div className="font-bold text-sm text-[var(--text-primary)] flex items-center gap-1.5">
-                    <span>⭐</span> {t('home.bonusFirstDonation', '1er Don publié : +50 pommes')}
+                    <span>🤝</span> {t('home.bonusFirstDonation', 'Le Vrai Fihavanana')}
                   </div>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusFirstDonationSub', 'Bonus de bienvenue pour votre première offre solidaire.')}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusFirstDonationSub', 'Tisser des liens humains chaleureux et bienveillants dans votre fokontany.')}</p>
                 </div>
 
                 <div className="glass-card p-3.5 rounded-xl shadow-2xs">
                   <div className="font-bold text-sm text-[var(--text-primary)] flex items-center gap-1.5">
-                    <span>🎲</span> {t('home.bonusRandom', 'Récompense aléatoire : 10 à 1 000')}
+                    <span>🛡️</span> {t('home.bonusRandom', 'Confiance & Sécurité')}
                   </div>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusRandomSub', 'Gagnées à chaque don admissible publié !')}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t('home.bonusRandomSub', 'Échanges privés, coordonnées protégées et respect mutuel garanti.')}</p>
                 </div>
               </div>
 
               <div className="p-4 bg-emerald-800 text-white rounded-2xl mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <div className="font-black text-amber-300 text-lg">
-                    {t('home.appleValueRatio', '1 000 Pommes = 1 000 Ariary')}
+                    {t('home.appleValueRatio', 'Un objet inutilisé chez vous ?')}
                   </div>
                   <div className="text-xs text-emerald-100">
-                    {t('home.appleValueRatioSub', 'Bons d\'achat valables en caisse auprès des enseignes partenaires (Score, Supermaki, Librairies...)')}
+                    {t('home.appleValueRatioSub', 'Prenez une photo en 30 secondes et faites un heureux dans votre quartier.')}
                   </div>
                 </div>
                 <button
-                  onClick={() => {
-                    if (!currentUser) {
-                      onOpenAuthModal();
-                    } else {
-                      onNavigate('dashboard', { tab: 'apples' });
-                    }
-                  }}
-                  className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-emerald-950 font-bold text-xs rounded-xl shadow-xs transition-colors shrink-0 cursor-pointer active:scale-95"
+                  onClick={() => onNavigate('publish')}
+                  className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-emerald-950 font-bold text-xs rounded-xl shadow-xs transition-colors shrink-0 cursor-pointer active:scale-95"
                 >
-                  {t('home.viewBalance', 'Voir mon solde')}
+                  {t('home.viewBalance', 'Proposer un don')}
                 </button>
               </div>
             </div>
 
             <div className="lg:col-span-5 flex justify-center">
               <div className="glass-card p-6 rounded-3xl shadow-lg max-w-sm w-full space-y-4 text-center">
-                <div className="w-20 h-20 mx-auto rounded-3xl bg-amber-100 flex items-center justify-center text-4xl shadow-inner">
-                  🍎
+                <div className="w-20 h-20 mx-auto rounded-3xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-4xl shadow-inner text-emerald-700 dark:text-emerald-300">
+                  🤝
                 </div>
-                <h3 className="text-xl font-black text-[var(--text-primary)]">{t('home.vaultTitle', 'Votre Coffre-fort Numérique')}</h3>
-                <p className="text-xs text-[var(--text-primary)]">
-                  {t('home.vaultDesc', 'Chaque coupon généré contient un code sécurisé à 8 chiffres et un code-barres officiel imprimable ou présentable sur votre smartphone.')}
+                <h3 className="text-xl font-black text-[var(--text-primary)]">{t('home.vaultTitle', 'La Joie Pure du Partage')}</h3>
+                <p className="text-xs text-[var(--text-primary)] leading-relaxed">
+                  {t('home.vaultDesc', '« Ny fihavanana toy ny tady mitondra aina ». Quand nous partageons, nous bâtissons ensemble une communauté malgache plus solidaire et plus humaine.')}
                 </p>
-                <div className="p-3 bg-black/10 rounded-xl font-mono text-xs font-bold text-[var(--text-primary)] tracking-wider">
-                  {t('home.vaultExample', 'EXEMPLE : 4829 - 1054 (10 000 Ar)')}
+                <div className="p-3 bg-emerald-500/10 rounded-xl font-semibold text-xs text-emerald-800 dark:text-emerald-300">
+                  {t('home.vaultExample', '100% Gratuit • Sans contrepartie')}
                 </div>
               </div>
             </div>

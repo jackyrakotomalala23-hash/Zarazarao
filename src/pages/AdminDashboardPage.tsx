@@ -223,7 +223,7 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Partners List */}
       <div className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-xs space-y-4">
         <h3 className="text-base font-black text-gray-900">
-          Enseignes partenaires officielles acceptant les coupons
+          Points relais et partenaires solidaires de la communauté
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

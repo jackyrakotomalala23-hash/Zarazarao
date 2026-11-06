@@ -6,9 +6,7 @@ import {
   Menu, 
   X, 
   Shield, 
-  Store, 
   Award, 
-  Gift, 
   LogOut, 
   Layers, 
   HelpCircle,
@@ -16,7 +14,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { AppleBadge } from '@/components/common/AppleBadge';
 import { NotificationBellDropdown } from '@/components/notifications/NotificationBellDropdown';
 import { ThemeSelector } from '@/components/common/ThemeSelector';
 import { LanguageSelector } from '@/components/common/LanguageSelector';
@@ -136,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <span>🎁</span>
                     <div>
                       <div className="font-semibold">Donateur (Mialy - Tana)</div>
-                      <div className="text-[10px] text-gray-500">240 pommes, plusieurs dons</div>
+                      <div className="text-[10px] text-gray-500">Donateur régulier, esprit de partage</div>
                     </div>
                   </button>
                   <button
@@ -146,17 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <span>🤝</span>
                     <div>
                       <div className="font-semibold">Bénéficiaire (Fidy - Tamatave)</div>
-                      <div className="text-[10px] text-gray-500">Demandes et réservations</div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { switchDemoRole('partner'); setDemoRoleOpen(false); }}
-                    className="w-full text-left px-3 py-2 hover:bg-emerald-50 flex items-center gap-2 text-gray-800 cursor-pointer"
-                  >
-                    <span>🏪</span>
-                    <div>
-                      <div className="font-semibold">Magasin Partenaire (Score)</div>
-                      <div className="text-[10px] text-gray-500">Vérification de coupons en caisse</div>
+                      <div className="text-[10px] text-gray-500">Demandes et réservations d'objets</div>
                     </div>
                   </button>
                   <button
@@ -166,22 +153,12 @@ export const Header: React.FC<HeaderProps> = ({
                     <span>🛡️</span>
                     <div>
                       <div className="font-semibold">Super Admin Zarazarao</div>
-                      <div className="text-[10px] text-gray-500">Modération, audits, stats</div>
+                      <div className="text-[10px] text-gray-500">Modération, audits, communauté</div>
                     </div>
                   </button>
                 </div>
               )}
             </div>
-
-            {/* Apple Loyalty Points Badge (Compact: Emoji + Count only, no "pommes" text) */}
-            {currentUser && userProfile && (
-              <AppleBadge
-                count={userProfile.applesCount || 0}
-                showLabel={false}
-                size="sm"
-                onClick={() => onNavigate('dashboard', { tab: 'apples' })}
-              />
-            )}
 
             {/* Theme & Language Selectors */}
             <ThemeSelector />
@@ -273,30 +250,6 @@ export const Header: React.FC<HeaderProps> = ({
                           <Award className="w-4 h-4 text-emerald-700" />
                           Mes réservations
                         </button>
-                        <button
-                          onClick={() => { onNavigate('dashboard', { tab: 'apples' }); setUserDropdownOpen(false); }}
-                          className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-2.5 text-gray-700 cursor-pointer text-xs sm:text-sm"
-                        >
-                          <Gift className="w-4 h-4 text-amber-500" />
-                          Fidélité Pommes & Coupons
-                        </button>
-                        <button
-                          onClick={() => { onNavigate('dashboard', { tab: 'vault' }); setUserDropdownOpen(false); }}
-                          className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-2.5 text-gray-700 cursor-pointer text-xs sm:text-sm"
-                        >
-                          <Store className="w-4 h-4 text-emerald-700" />
-                          Coffre-fort de coupons
-                        </button>
-
-                        {isPartner && (
-                          <button
-                            onClick={() => { onNavigate('store-verify'); setUserDropdownOpen(false); }}
-                            className="w-full text-left px-4 py-2.5 hover:bg-emerald-50 text-emerald-900 font-semibold flex items-center gap-2.5 border-t border-gray-100 cursor-pointer text-xs sm:text-sm"
-                          >
-                            <Store className="w-4 h-4 text-emerald-600" />
-                            Vérification caisse magasin
-                          </button>
-                        )}
 
                         {isAdmin && (
                           <button

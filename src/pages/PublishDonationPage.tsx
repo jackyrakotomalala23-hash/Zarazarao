@@ -43,12 +43,8 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Success Celebration Modal State
-  const [successReward, setSuccessReward] = useState<{
-    donationId: string;
-    firstBonus: boolean;
-    randomReward: number;
-  } | null>(null);
+  // Success Modal State
+  const [publishedDonationId, setPublishedDonationId] = useState<string | null>(null);
 
   if (!currentUser) {
     return (
@@ -58,7 +54,7 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
         </div>
         <h2 className="text-2xl font-black text-gray-900">Connectez-vous pour publier un don</h2>
         <p className="text-sm text-gray-600">
-          Rejoignez la communauté Zarazarao pour offrir un objet gratuit, recevoir des remerciements et gagner jusqu'à 1 000 pommes de fidélité !
+          Rejoignez la communauté Zarazarao pour offrir un objet gratuit, faire grandir l'esprit d'entraide Fihavanana et donner une seconde vie à vos affaires !
         </p>
         <button
           onClick={onOpenAuthModal}
@@ -94,7 +90,7 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
 
     setSubmitting(true);
     try {
-      const { donation, reward } = await donationService.createDonation({
+      const { donation } = await donationService.createDonation({
         ownerUid: currentUser.uid,
         ownerDisplayName: userProfile?.displayName || currentUser.displayName || 'Donateur',
         ownerPhotoURL: userProfile?.photoURL || currentUser.photoURL || undefined,
@@ -118,11 +114,7 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
       });
 
       await refreshProfile();
-      setSuccessReward({
-        donationId: donation.id,
-        firstBonus: reward.firstBonus,
-        randomReward: reward.randomReward
-      });
+      setPublishedDonationId(donation.id);
     } catch (err: any) {
       console.error('Donation publish error:', err);
       setErrorMessage(err?.message || 'Erreur lors de la publication du don.');
@@ -380,7 +372,7 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
             ) : (
               <>
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Publier mon don & tenter de gagner jusqu'à 1 000 pommes</span>
+                <span>Publier mon don solidaire (100% Gratuit)</span>
               </>
             )}
           </button>
@@ -388,59 +380,46 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
 
       </form>
 
-      {/* Success Reward Celebration Modal */}
-      {successReward && (
+      {/* Success Celebration Modal */}
+      {publishedDonationId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in zoom-in-95 duration-200">
-          <div className="bg-white rounded-3xl max-w-md w-full p-8 text-center space-y-6 shadow-2xl border border-amber-200 relative overflow-hidden">
+          <div className="bg-white rounded-3xl max-w-md w-full p-8 text-center space-y-6 shadow-2xl border border-emerald-200 relative overflow-hidden">
             
-            <div className="w-20 h-20 mx-auto rounded-3xl bg-amber-100 flex items-center justify-center text-4xl shadow-inner animate-bounce">
-              🍎
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-4xl shadow-inner animate-bounce">
+              🤝
             </div>
 
             <div className="space-y-2">
               <span className="text-xs font-black uppercase tracking-widest text-emerald-800">
-                Félicitations pour votre générosité !
+                Misaotra betsaka !
               </span>
               <h2 className="text-2xl font-black text-gray-900">
                 Don publié avec succès !
               </h2>
-              <p className="text-xs text-gray-600">
-                Votre annonce est désormais visible par tous les habitants de Madagascar.
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Votre annonce solidaire est désormais visible par tous les habitants de Madagascar. Quelqu'un près de chez vous en profitera très bientôt.
               </p>
             </div>
 
-            {/* Apple Rewards Won */}
-            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200/80 space-y-2">
-              <div className="text-xs text-amber-800 font-semibold">Récompenses de fidélité créditées :</div>
-              
-              <div className="text-2xl font-black text-emerald-950 flex items-center justify-center gap-2">
-                <span>+{successReward.randomReward} Pommes</span>
-                <span className="text-sm font-bold text-amber-700">(Tirage aléatoire)</span>
-              </div>
-
-              {successReward.firstBonus && (
-                <div className="text-xs font-bold text-emerald-800 pt-1 border-t border-amber-200/60">
-                  + 50 Pommes supplémentaires (Bonus 1ère publication validée !)
-                </div>
-              )}
+            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200/80 space-y-1">
+              <div className="text-xs text-emerald-900 font-bold">🇲🇬 L'esprit Fihavanana en action</div>
+              <p className="text-[11px] text-emerald-700">
+                Votre geste contribue à l'entraide locale et donne une seconde vie utile à vos objets.
+              </p>
             </div>
-
-            <p className="text-[11px] text-gray-500">
-              Rappel : 1 000 pommes équivalent à 1 000 Ar en bon d'achat utilisable chez nos enseignes partenaires.
-            </p>
 
             <div className="flex gap-3">
               <button
-                onClick={() => onNavigate('donation-detail', { id: successReward.donationId })}
-                className="flex-1 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
+                onClick={() => onNavigate('donation-detail', { id: publishedDonationId })}
+                className="flex-1 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
               >
                 Voir mon annonce
               </button>
               <button
-                onClick={() => onNavigate('dashboard', { tab: 'apples' })}
-                className="flex-1 py-3 bg-amber-400 hover:bg-amber-300 text-emerald-950 font-bold text-xs rounded-xl shadow-xs transition-colors"
+                onClick={() => onNavigate('dashboard', { tab: 'donations' })}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
               >
-                Mon solde fidélité
+                Mes publications
               </button>
             </div>
 

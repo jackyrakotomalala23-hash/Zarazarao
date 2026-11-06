@@ -19,6 +19,7 @@ import { MessagingPage } from '@/pages/MessagingPage';
 import { StorePartnerVerificationPage } from '@/pages/StorePartnerVerificationPage';
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage';
 import { ProfileManagementPage } from '@/pages/ProfileManagementPage';
+import { ContactPage } from '@/pages/ContactPage';
 import { checkAndSeedInitialData } from '@/services/seedService';
 import { ZaraBotChatbot } from '@/components/chat/ZaraBotChatbot';
 import { CursorGlowFollower } from '@/components/common/CursorGlowFollower';
@@ -227,6 +228,10 @@ function AppContent() {
 
         {currentPage === 'admin' && (
           <AdminDashboardPage />
+        )}
+
+        {currentPage === 'contact' && (
+          <ContactPage onNavigate={navigate} />
         )}
           </motion.div>
         </AnimatePresence>

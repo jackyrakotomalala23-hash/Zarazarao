@@ -96,6 +96,16 @@ export const donationService = {
         list.sort((a, b) => b.conditionScore - a.conditionScore);
       }
 
+      // Filter out recovered donations older than 15 days
+      const fifteenDaysAgo = Date.now() - (15 * 24 * 60 * 60 * 1000);
+      list = list.filter(d => {
+        if (d.status === 'RECUPERE' && d.recoveredAt) {
+          const recTime = new Date(d.recoveredAt).getTime();
+          if (recTime < fifteenDaysAgo) return false;
+        }
+        return true;
+      });
+
       return list;
     } catch (error) {
       handleFirestoreError(error, OperationType.LIST, 'donations');
@@ -351,6 +361,42 @@ export const donationService = {
         conversationId,
         'DONATION_RECOVERED',
         `✨ Don récupéré avec succès ! Merci de faire vivre la solidarité et le partage à Madagascar avec Zarazarao.`
+      );
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);
+    }
+  },
+
+  // Mark donation as delivered by donor
+  async markAsDelivered(
+    donationId: string,
+    donorUid: string,
+    conversationId: string
+  ): Promise<void> {
+    const donationRef = doc(db, 'donations', donationId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const dSnap = await transaction.get(donationRef);
+        if (!dSnap.exists()) throw new Error('Donation non trouvée.');
+        const donation = dSnap.data() as Donation;
+
+        if (donation.ownerUid !== donorUid) {
+          throw new Error('Seul le donateur peut marquer le don comme livré.');
+        }
+
+        const now = new Date().toISOString();
+        transaction.update(donationRef, {
+          status: 'RECUPERE',
+          recoveredAt: now,
+          updatedAt: now
+        });
+      });
+
+      await chatService.sendSystemMessage(
+        conversationId,
+        'DONATION_RECOVERED',
+        `🚚 Le donateur a confirmé la remise de l'objet. Bon partage !`
       );
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);

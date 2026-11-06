@@ -88,92 +88,50 @@ export const ZARABOT_KNOWLEDGE_BASE: KnowledgeItem[] = [
     answer: "Jamais ! Pour des raisons strictes de sécurité et de respect de la vie privée, seule votre ville et votre fokontany apparaissent publiquement. Le lieu exact de rendez-vous est convenu de façon sécurisée via la messagerie privée entre vous et la personne choisie."
   },
 
-  // --- 3. Système de fidélité « Les Pommes » ---
+  // --- 3. L'Esprit du Don & Fihavanana ---
   {
-    id: 'pommes-1',
-    category: 'Fidélité & Pommes',
-    question: "Que sont les 'Pommes' sur Zarazarao ?",
-    keywords: ['pomme', 'pommes', 'points', 'fidelite', 'gagner des pommes'],
-    answer: "Les 'Pommes' sont des points de fidélité et de reconnaissance communautaire. Elles récompensent vos gestes de solidarité, la publication de dons réels et l'entraide. Les pommes ne sont pas une monnaie entre membres, mais peuvent être converties en bons d'achat chez nos partenaires."
+    id: 'fihavanana-1',
+    category: 'Esprit de Partage & Fihavanana',
+    question: "Pourquoi donner gratuitement sur Zarazarao ?",
+    keywords: ['pourquoi donner', 'esprit de partage', 'fihavanana', 'interet', 'motivation'],
+    answer: "Sur Zarazarao, donner est un geste pur de bienveillance et de citoyenneté. En offrant un objet que vous n'utilisez plus, vous désencombrez votre intérieur, faites le bonheur direct d'un voisin ou d'une famille malgache, et vous participez à bâtir un Madagascar solidaire."
   },
   {
-    id: 'pommes-2',
-    category: 'Fidélité & Pommes',
-    question: "Combien de pommes gagne-t-on à l'inscription ?",
-    keywords: ['inscription', 'bonus inscription', 'creation compte', '10 pommes'],
-    answer: "Vous recevez automatiquement un bonus d'accueil de 10 pommes dès la création de votre compte Zarazarao."
+    id: 'fihavanana-2',
+    category: 'Esprit de Partage & Fihavanana',
+    question: "Que signifie le Fihavanana dans le cadre de Zarazarao ?",
+    keywords: ['fihavanana', 'valeur', 'culture', 'malagasy', 'entraide'],
+    answer: "Le Fihavanana est la valeur fondamentale d'amitié, de parenté sociale et de solidarité mutuelle à Madagascar. Sur Zarazarao, chaque don renforce ce lien humain : donner avec générosité, recevoir avec gratitude, et se respecter mutuellement."
   },
   {
-    id: 'pommes-3',
-    category: 'Fidélité & Pommes',
-    question: "Comment obtenir le bonus de profil complet ?",
-    keywords: ['profil complet', 'bonus profil', '10 pommes profil', 'completer profil'],
-    answer: "En renseignant votre nom, prénom, photo de profil, numéro de téléphone vérifié, ville et fokontany dans votre espace profil, vous débloquez immédiatement un bonus supplémentaire de 10 pommes !"
-  },
-  {
-    id: 'pommes-4',
-    category: 'Fidélité & Pommes',
-    question: "Combien de pommes rapporte la publication d'un premier don ?",
-    keywords: ['premier don', 'premiere publication', '50 pommes', 'bonus premier don'],
-    answer: "Votre tout premier don publié et validé vous rapporte un bonus exceptionnel de 50 pommes !"
-  },
-  {
-    id: 'pommes-5',
-    category: 'Fidélité & Pommes',
-    question: "Comment fonctionne la récompense aléatoire de 10 à 1 000 pommes par don ?",
-    keywords: ['recompense aleatoire', 'tirage au sort', '1000 pommes', 'combien de pommes par don'],
-    answer: "Pour chaque don publié admissible, un algorithme sécurisé côté serveur effectue un tirage au sort qui vous attribue entre 10 et 1 000 pommes de récompense ! Une animation festive vous révèle votre gain dès la validation."
-  },
-  {
-    id: 'pommes-6',
-    category: 'Fidélité & Pommes',
-    question: "Peut-on perdre ses pommes ?",
-    keywords: ['perdre pommes', 'annulation don', 'solde negatif', 'fraude'],
-    answer: "Vos pommes restent valides tant que votre compte est actif. En revanche, si une annonce s'avère frauduleuse ou trompeuse, les modérateurs peuvent annuler les points indûment perçus."
+    id: 'fihavanana-3',
+    category: 'Esprit de Partage & Fihavanana',
+    question: "Comment remercier un donateur après la remise ?",
+    keywords: ['remercier', 'avis', 'remerciement', 'apres remise', 'gratitude'],
+    answer: "Un simple « Misaotra betsaka » chaleureux lors de la remise en main propre et un mot gentil dans la messagerie font toute la différence ! Vous confirmez ensuite la réception de l'objet sur la plateforme pour clore le don en beauté."
   },
 
-  // --- 4. Conversion & Bons d'achat Partenaires ---
+  // --- 4. Réemploi, Écologie & Bonnes Pratiques ---
   {
-    id: 'coupons-1',
-    category: 'Bons d’achat & Partenaires',
-    question: "Quelle est la règle de conversion des pommes en Ariary ?",
-    keywords: ['conversion', 'taux de conversion', 'combien vaut une pomme', 'valeur ariary', '1000 pommes'],
-    answer: "La règle de base est simple et transparente : 1 000 pommes = 1 000 Ar de valeur faciale de coupon. Par exemple, 10 000 pommes donnent un bon d'achat de 10 000 Ar."
+    id: 'ecologie-1',
+    category: 'Réemploi & Écologie',
+    question: "Comment Zarazarao aide-t-il à protéger l'environnement à Madagascar ?",
+    keywords: ['ecologie', 'environnement', 'dechets', 'anti gaspillage', 'seconde vie', 'reemploi'],
+    answer: "Donner un objet au lieu de le jeter évite qu'il ne finisse dans les décharges ou dans la nature. Cela prolonge sa durée de vie, diminue la production de déchets et encourage une économie circulaire locale responsable à Madagascar."
   },
   {
-    id: 'coupons-2',
-    category: 'Bons d’achat & Partenaires',
-    question: "Quel est le montant minimum d'un coupon utilisable en magasin ?",
-    keywords: ['seuil minimum', 'montant minimum', '10000 ar', 'utiliser magasin', 'seuil'],
-    answer: "Le montant minimum pour pouvoir utiliser un coupon chez une enseigne partenaire est de 10 000 Ar (soit 10 000 pommes converties). Les coupons d'une valeur inférieure peuvent être cumulés dans votre coffre-fort jusqu'à atteindre ce seuil."
+    id: 'ecologie-2',
+    category: 'Réemploi & Écologie',
+    question: "Puis-je donner des objets qui ont des défauts d'usure ?",
+    keywords: ['usure', 'defauts', 'etat', 'abime', 'occasion'],
+    answer: "Oui, tant que l'objet reste fonctionnel ou réparable, et que vous décrivez honnêtement son état avec des photos réelles. Un vêtement un peu usé ou un meuble à repeindre peut être très utile pour quelqu'un d'autre !"
   },
   {
-    id: 'coupons-3',
-    category: 'Bons d’achat & Partenaires',
-    question: "Quelles sont les enseignes partenaires qui acceptent les coupons Zarazarao ?",
-    keywords: ['partenaires', 'magasins', 'score', 'jumbo', 'supermaki', 'librairie', 'quincaillerie', 'ou depenser'],
-    answer: "Les partenaires agréés comprennent le réseau des supermarchés Score & Jumbo Score Madagascar, les supérettes Supermaki, les librairies et papeteries scolaires agréées à Analakely, ainsi que le réseau de quincailleries BricoTech à Tamatave."
-  },
-  {
-    id: 'coupons-4',
-    category: 'Bons d’achat & Partenaires',
-    question: "Où retrouver mes coupons créés ?",
-    keywords: ['coffre fort', 'retrouver coupons', 'mes coupons', 'voir mes bons'],
-    answer: "Rendez-vous dans votre espace membre > onglet 'Fidélité & Coupons' > 'Mon Coffre-fort de coupons'. Vous y trouverez la liste de vos coupons actifs, leur code unique à 8 chiffres, le code-barres et les boutons de téléchargement PDF ou impression."
-  },
-  {
-    id: 'coupons-5',
-    category: 'Bons d’achat & Partenaires',
-    question: "Comment le caissier en magasin vérifie-t-il mon coupon ?",
-    keywords: ['en caisse', 'caissier', 'scanner', 'code 8 chiffres', 'validation magasin'],
-    answer: "En caisse, présentez votre écran de téléphone ou votre coupon imprimé. Le personnel utilise le portail partenaire Zarazarao pour scanner le code-barres ou saisir le code unique à 8 chiffres. La validation est immédiate et la réduction est déduite de votre ticket."
-  },
-  {
-    id: 'coupons-6',
-    category: 'Bons d’achat & Partenaires',
-    question: "Un coupon peut-il être utilisé plusieurs fois ?",
-    keywords: ['reutiliser', 'deux fois', 'deja utilise', 'securite coupon'],
-    answer: "Non, absolument pas. Dès qu'un magasin partenaire valide un coupon, son statut passe de façon irréversible à 'UTILISÉ' sur Firestore. Toute tentative de réutilisation est automatiquement rejetée."
+    id: 'ecologie-3',
+    category: 'Réemploi & Écologie',
+    question: "Combien de dons puis-je publier sur Zarazarao ?",
+    keywords: ['limite de don', 'combien de dons', 'quota', 'nombre de publications'],
+    answer: "Il n'y a aucune limite ! Vous pouvez publier autant de dons que vous le désirez : vêtements, livres, meubles, ustensiles de cuisine, matériel scolaire ou électronique. Chaque don compte pour la communauté."
   },
 
   // --- 5. Réservations & Récupération ---

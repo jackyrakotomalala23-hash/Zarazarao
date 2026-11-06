@@ -279,7 +279,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="flex items-center gap-2 mb-2">
                 {mode === 'signup' && (
                   <span className="bg-amber-400/20 border border-amber-300/40 text-amber-200 font-bold px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 shadow-inner">
-                    🍎 Bonus d’inscription : +10 pommes offertes !
+                    🤝 100% Gratuit & Solidaire à Madagascar
                   </span>
                 )}
                 {mode === 'signin' && (
@@ -481,7 +481,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-xl font-black text-slate-900">Mot de passe mis à jour ! 🍎</h3>
+                  <h3 className="text-xl font-black text-slate-900">Mot de passe mis à jour ! 🤝</h3>
                   <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
                     Votre mot de passe Zarazarao a été modifié avec succès. Vous pouvez maintenant vous connecter en toute sécurité avec vos nouveaux identifiants.
                   </p>
@@ -873,7 +873,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     ) : (
                       <>
                         <ShieldCheck className="w-5 h-5" />
-                        <span translate="no">{mode === 'signup' ? 'Créer mon compte (+10 pommes)' : 'Se connecter'}</span>
+                        <span translate="no">{mode === 'signup' ? 'Créer mon compte gratuit' : 'Se connecter'}</span>
                       </>
                     )}
                   </button>
