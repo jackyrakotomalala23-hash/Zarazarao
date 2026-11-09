@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   User as FirebaseUser, 
-  onAuthStateChanged, 
-  signInWithPopup, 
+  onAuthStateChanged,
+  signInWithRedirect,
+  getRedirectResult, 
   GoogleAuthProvider, 
   signOut as fbSignOut,
   signInWithEmailAndPassword,
@@ -100,6 +101,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // Handle redirect result
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          console.log('Redirect sign-in successful');
+        }
+      })
+      .catch((error) => {
+        console.error('Redirect sign-in error:', error);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       if (user) {
@@ -115,7 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    await signInWithRedirect(auth, provider);
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string, city: string, phone: string) => {
