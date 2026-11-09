@@ -1,20 +1,25 @@
 {
+  "id": "/",
   "short_name": "Zarazarao",
   "name": "Zarazarao - Dons gratuits à Madagascar",
+  "description": "Plateforme communautaire de dons gratuits et partage d'objets à Madagascar.",
+  "start_url": "/",
+  "scope": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "display": "standalone",
   "icons": [
     {
       "src": "/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
       "src": "/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
     }
-  ],
-  "start_url": "/",
-  "background_color": "#ffffff",
-  "theme_color": "#0f172a",
-  "display": "standalone"
+  ]
 }

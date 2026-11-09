@@ -30,6 +30,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { ZaraLoader } from '@/components/common/ZaraLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fcmService } from '@/services/fcmService';
+import { PWAInstallBanner } from '@/components/common/PWAInstallBanner';
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -141,6 +142,9 @@ function AppContent() {
           <ZaraLoader size="lg" text="Chargement Zarazarao..." />
         </div>
       )}
+
+      {/* Top Mobile PWA Install Banner (A2HS) */}
+      <PWAInstallBanner />
 
       {/* Sticky/Fixed Header */}
       <Header
