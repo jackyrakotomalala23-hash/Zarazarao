@@ -118,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
                 title="Changer de rôle pour tester"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-bold text-emerald-900">{userProfile?.role === 'admin' ? 'Admin' : isPartner ? 'Partenaire' : 'Membre'}</span>
+                <span className="font-bold text-emerald-900">{userProfile?.role === 'admin' ? 'Admin' : 'Membre'}</span>
               </button>
 
               {demoRoleOpen && (

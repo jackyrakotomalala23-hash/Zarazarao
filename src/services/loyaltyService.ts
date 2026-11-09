@@ -28,7 +28,7 @@ export const loyaltyService = {
     return String(Math.floor(Math.random() * (max - min + 1)) + min);
   },
 
-  // Award Signup Bonus (10 pommes)
+  // Award Signup Bonus (10 points)
   async awardSignupBonus(userId: string): Promise<boolean> {
     const userRef = doc(db, 'users', userId);
     try {
@@ -56,7 +56,7 @@ export const loyaltyService = {
           sourceId: userId,
           status: 'CONFIRMED',
           createdAt: new Date().toISOString(),
-          note: 'Bonus de bienvenue Zarazarao (+10 pommes)'
+          note: 'Bonus de bienvenue Zarazarao (+10 points)'
         };
         transaction.set(txRef, txData);
         return true;
@@ -66,7 +66,7 @@ export const loyaltyService = {
     }
   },
 
-  // Award Profile Completion Bonus (10 pommes)
+  // Award Profile Completion Bonus (10 points)
   async awardProfileCompletionBonus(userId: string): Promise<boolean> {
     const userRef = doc(db, 'users', userId);
     try {
@@ -94,7 +94,7 @@ export const loyaltyService = {
           sourceId: userId,
           status: 'CONFIRMED',
           createdAt: new Date().toISOString(),
-          note: 'Bonus profil 100% complété (+10 pommes)'
+          note: 'Bonus profil 100% complété (+10 points)'
         };
         transaction.set(txRef, txData);
         return true;
@@ -104,7 +104,7 @@ export const loyaltyService = {
     }
   },
 
-  // Award Donation Rewards: checks if first donation bonus (+50) applies + random 10-1000 apples
+  // Award Donation Rewards: checks if first donation bonus (+50) applies + random 10-1000 points
   async awardDonationReward(userId: string, donationId: string): Promise<{ firstBonus: boolean; randomReward: number }> {
     const userRef = doc(db, 'users', userId);
     const randomReward = this.generateRandomDonationReward();
@@ -136,7 +136,7 @@ export const loyaltyService = {
             sourceId: donationId,
             status: 'CONFIRMED',
             createdAt: new Date().toISOString(),
-            note: 'Bonus première publication de don (+50 pommes)'
+            note: 'Bonus première publication de don (+50 points Fihavanana)'
           };
           transaction.set(bonusTxRef, bonusTxData);
         }
@@ -153,7 +153,7 @@ export const loyaltyService = {
           sourceId: donationId,
           status: 'CONFIRMED',
           createdAt: new Date().toISOString(),
-          note: `Récompense aléatoire pour votre don (+${randomReward} pommes)`
+          note: `Récompense aléatoire pour votre don (+${randomReward} points Fihavanana)`
         };
         transaction.set(randomTxRef, randomTxData);
 
@@ -215,25 +215,25 @@ export const loyaltyService = {
           sourceId: donationId,
           status: 'CONFIRMED',
           createdAt: new Date().toISOString(),
-          note: `Retrait de ${totalDeduction} pommes suite à la suppression de l'annonce`
+          note: `Retrait de ${totalDeduction} points suite à la suppression de l'annonce`
         };
         transaction.set(debitTxRef, debitTxData);
 
         return totalDeduction;
       });
     } catch (error) {
-      console.warn('Failed to deduct donation apples:', error);
+      console.warn('Failed to deduct donation points:', error);
       return 0;
     }
   },
 
-  // Convert Apples into Coupon (1000 pommes = 1000 Ar)
+  // Convert Points into Coupon (1000 points = 1000 Ar)
   async convertApplesToCoupon(userId: string, userName: string, pointsToConvert: number): Promise<Coupon> {
     if (pointsToConvert < 1000 || pointsToConvert % 1000 !== 0) {
-      throw new Error('Le nombre de pommes à convertir doit être un multiple de 1 000.');
+      throw new Error('Le nombre de points à convertir doit être un multiple de 1 000.');
     }
 
-    const faceValueAr = pointsToConvert; // 1000 pommes = 1000 Ar
+    const faceValueAr = pointsToConvert; // 1000 points = 1000 Ar
     const userRef = doc(db, 'users', userId);
     const couponId = `coupon-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     const eightDigitCode = this.generateEightDigitCode();
@@ -249,7 +249,7 @@ export const loyaltyService = {
         const currentBalance = userData.applesCount || 0;
 
         if (currentBalance < pointsToConvert) {
-          throw new Error('Solde de pommes insuffisant pour cette conversion.');
+          throw new Error('Solde de points insuffisant pour cette conversion.');
         }
 
         // Deduct points
@@ -271,7 +271,7 @@ export const loyaltyService = {
           sourceId: couponId,
           status: 'CONFIRMED',
           createdAt: new Date().toISOString(),
-          note: `Conversion de ${pointsToConvert} pommes en bon d'achat de ${faceValueAr.toLocaleString('fr-FR')} Ar`
+          note: `Conversion de ${pointsToConvert} points en bon d'achat de ${faceValueAr.toLocaleString('fr-FR')} Ar`
         };
         transaction.set(txRef, txData);
 
@@ -325,7 +325,7 @@ export const loyaltyService = {
     }
   },
 
-  // Convert Apples into Coupon for a specific Partner Store (min 10,000 apples)
+  // Convert Points into Coupon for a specific Partner Store (min 10,000 points)
   async convertApplesToCouponWithPartner(
     userId: string, 
     userName: string, 
@@ -334,10 +334,10 @@ export const loyaltyService = {
     partnerName: string
   ): Promise<Coupon> {
     if (pointsToConvert < 10000) {
-      throw new Error('Le nombre minimum de pommes requis pour débloquer un bon d\'achat est de 10 000 pommes.');
+      throw new Error('Le nombre minimum de points requis pour débloquer un bon d\'achat est de 10 000 points.');
     }
 
-    const faceValueAr = pointsToConvert; // 10,000 pommes = 10,000 Ar
+    const faceValueAr = pointsToConvert; // 10,000 points = 10,000 Ar
     const userRef = doc(db, 'users', userId);
     const couponId = `coupon-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     const eightDigitCode = this.generateEightDigitCode();
@@ -353,7 +353,7 @@ export const loyaltyService = {
         const currentBalance = userData.applesCount || 0;
 
         if (currentBalance < pointsToConvert) {
-          throw new Error(`Solde de pommes insuffisant. Vous disposez de ${currentBalance.toLocaleString('fr-FR')} pommes.`);
+          throw new Error(`Solde de points insuffisant. Vous disposez de ${currentBalance.toLocaleString('fr-FR')} points.`);
         }
 
         // Deduct points
@@ -375,7 +375,7 @@ export const loyaltyService = {
           sourceId: couponId,
           status: 'CONFIRMED',
           createdAt: new Date().toISOString(),
-          note: `Conversion de ${pointsToConvert.toLocaleString('fr-FR')} pommes en bon d'achat pour ${partnerName}`
+          note: `Conversion de ${pointsToConvert.toLocaleString('fr-FR')} points en bon d'achat pour ${partnerName}`
         };
         transaction.set(txRef, txData);
 

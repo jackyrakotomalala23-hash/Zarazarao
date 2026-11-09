@@ -16,6 +16,7 @@ import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
 import { UserProfile, UserRole } from '@/types';
 import { loyaltyService } from '@/services/loyaltyService';
+import { sanitizeForFirestore } from '@/services/donationService';
 
 interface AuthContextType {
   currentUser: FirebaseUser | null;
@@ -194,12 +195,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateUserProfileData = async (data: Partial<UserProfile>) => {
     if (!currentUser) return;
-    const userRef = doc(db, 'users', currentUser.uid);
-    await updateDoc(userRef, {
-      ...data,
-      updatedAt: new Date().toISOString()
-    });
-    setUserProfile(prev => prev ? { ...prev, ...data } : null);
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const cleanedData = sanitizeForFirestore({
+        ...data,
+        updatedAt: new Date().toISOString()
+      });
+
+      // 1. Persist updated fields to Firestore with merge
+      await setDoc(userRef, cleanedData, { merge: true });
+
+      // 2. Keep Firebase Auth user profile in sync
+      if (data.displayName || data.photoURL) {
+        try {
+          await updateProfile(currentUser, {
+            displayName: data.displayName || currentUser.displayName,
+            photoURL: data.photoURL || currentUser.photoURL
+          });
+        } catch (authErr) {
+          console.warn('Could not update Firebase Auth profile:', authErr);
+        }
+      }
+
+      // 3. FORCE REFRESH of Auth session state in memory
+      try {
+        await currentUser.reload();
+      } catch (reloadErr) {
+        console.warn('Auth user session reload warning:', reloadErr);
+      }
+
+      // 4. Force re-sync profile from Firestore to verify persistence
+      await syncProfile(auth.currentUser || currentUser);
+    } catch (err) {
+      console.error('Failed to update user profile:', err);
+      throw err;
+    }
   };
 
   const refreshProfile = async () => {

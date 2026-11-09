@@ -14,7 +14,8 @@ import {
   Truck, 
   User,
   Sparkles,
-  Flag
+  Flag,
+  Star
 } from 'lucide-react';
 import { Donation } from '@/types';
 import { donationService } from '@/services/donationService';
@@ -328,10 +329,14 @@ export const DonationDetailPage: React.FC<DonationDetailPageProps> = ({
                   <div className="text-xs text-gray-500">{donation.city} • Donateur engagé</div>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+              <div className="text-right space-y-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 block w-fit ml-auto">
                   Membre vérifié
                 </span>
+                <div className="flex items-center gap-1 text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                  <span>5.0 / 5 (Évaluations)</span>
+                </div>
               </div>
             </div>
 

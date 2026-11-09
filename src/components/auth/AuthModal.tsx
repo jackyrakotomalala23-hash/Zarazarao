@@ -617,11 +617,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
-                {/* Vercel Domain Tip */}
-                <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-2xl text-[11px] text-amber-900 leading-relaxed">
-                  <span className="font-bold">💡 Note pour Vercel (zarazarao.vercel.app) :</span> Pour activer Google sur votre domaine, ajoutez <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">zarazarao.vercel.app</code> dans la <span className="font-bold">Console Firebase &gt; Authentication &gt; Paramètres &gt; Domaines autorisés</span>. La connexion par e-mail / mot de passe fonctionne immédiatement.
-                </div>
-
                 {/* Fast Google Auth */}
                 <button
                   type="button"
@@ -853,12 +848,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         required
                         checked={acceptedTerms}
                         onChange={(e) => setAcceptedTerms(e.target.checked)}
-                        className="mt-0.5 rounded-md text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer"
+                        className="mt-0.5 rounded-md text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer shrink-0"
                       />
                       <span className="leading-tight">
-                        J'accepte la{' '}
-                        <span className="font-bold text-emerald-800 underline hover:text-emerald-950">charte de gratuité</span>,
-                        les conditions d'utilisation et la politique de confidentialité.
+                        J'accepte formellement les{' '}
+                        <a 
+                          href="#cgu" 
+                          onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent('navigate-app', { detail: 'cgu' })); }}
+                          className="font-bold text-emerald-800 underline hover:text-emerald-950"
+                        >
+                          CGU
+                        </a>, la{' '}
+                        <span className="font-bold text-emerald-800">charte Fihavanana</span> et la{' '}
+                        <a 
+                          href="#privacy" 
+                          onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent('navigate-app', { detail: 'data-privacy' })); }}
+                          className="font-bold text-emerald-800 underline hover:text-emerald-950"
+                        >
+                          politique de confidentialité
+                        </a>.
                       </span>
                     </label>
                   )}

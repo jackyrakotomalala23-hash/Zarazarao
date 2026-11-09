@@ -168,11 +168,11 @@ export const ZaraBotChatbot: React.FC = () => {
 
   return (
     <div className="fixed bottom-16 right-2 sm:bottom-6 sm:right-6 z-50">
-      {/* Floating Launcher Button (Clean AI Icon, No Emoji, No Text) */}
+      {/* Floating Launcher Button (Hidden on mobile as mobile bottom nav has direct message button) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="p-3.5 bg-gradient-to-tr from-emerald-800 via-emerald-700 to-indigo-900 hover:from-emerald-700 hover:to-indigo-800 text-white rounded-full shadow-2xl hover:shadow-emerald-900/50 transition-all duration-300 active:scale-95 cursor-pointer border border-emerald-400/30 relative flex items-center justify-center group"
+          className="hidden sm:flex p-3.5 bg-gradient-to-tr from-emerald-800 via-emerald-700 to-indigo-900 hover:from-emerald-700 hover:to-indigo-800 text-white rounded-full shadow-2xl hover:shadow-emerald-900/50 transition-all duration-300 active:scale-95 cursor-pointer border border-emerald-400/30 relative flex items-center justify-center group"
           aria-label="Ouvrir le chat ZaraBot IA"
           title="Ouvrir l'assistant IA ZaraBot"
         >
@@ -339,7 +339,7 @@ export const ZaraBotChatbot: React.FC = () => {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={t('bot.placeholder', "Posez votre question (quartier, don, pommes)...")}
+                  placeholder={t('bot.placeholder', "Posez votre question (quartier, ville, don)...")}
                   className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-2xl text-xs focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-hidden transition-all"
                 />
                 <button

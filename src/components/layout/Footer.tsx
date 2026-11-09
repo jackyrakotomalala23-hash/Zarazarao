@@ -136,12 +136,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </div>
             <div className="text-xs text-emerald-200 flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-amber-400" />
-              contact@zarazarao.mg
+              zarazaraomada@gmail.com
+            </div>
+            <div className="text-xs text-emerald-200 font-bold flex items-center gap-1.5">
+              <span>📞 +261 37 53 336 29</span>
             </div>
             <div>
               <button 
                 onClick={() => onNavigate('contact')}
-                className="mt-2 px-3 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl border border-emerald-700 transition-colors inline-flex items-center gap-1"
+                className="mt-2 px-3 py-1.5 bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl border border-emerald-700 transition-colors inline-flex items-center gap-1 cursor-pointer"
               >
                 Formulaire de contact
               </button>
@@ -149,7 +152,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Bottom copyright */}
+        {/* Bottom copyright & Legal links */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-400/70 gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center overflow-hidden">
@@ -162,13 +165,20 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <span>© {new Date().getFullYear()} ZARAZARAO • {t('footer.tagline')}</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button onClick={() => onNavigate('legal')} className="hover:underline">
-              {t('footer.cgu')}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-semibold">
+            <button onClick={() => onNavigate('cgu')} className="hover:text-white transition-colors cursor-pointer">
+              CGU & Charte
             </button>
             <span>•</span>
-            <button onClick={() => onNavigate('legal')} className="hover:underline">
-              {t('footer.privacy')}
+            <button onClick={() => onNavigate('data-privacy')} className="hover:text-white transition-colors cursor-pointer">
+              Données Personnelles
+            </button>
+            <span>•</span>
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('reopen-cookie-consent'))} 
+              className="hover:text-amber-300 text-emerald-200 transition-colors cursor-pointer"
+            >
+              🍪 Gestion des Cookies
             </button>
           </div>
         </div>

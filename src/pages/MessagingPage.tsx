@@ -2,21 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { 
   Send, 
   Smile, 
-  Image as ImageIcon, 
   Phone, 
   Video, 
   ArrowLeft, 
   CheckCircle2, 
-  AlertTriangle, 
   Package, 
-  Mic, 
-  MicOff, 
-  VideoOff, 
-  PhoneOff,
-  Clock,
-  Sparkles,
-  Lock,
-  ShieldCheck
+  ShieldCheck,
+  PhoneOff
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { chatService } from '@/services/chatService';
@@ -44,13 +36,18 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
   const [inputText, setInputText] = useState('');
   const [loadingConv, setLoadingConv] = useState(true);
   const [sending, setSending] = useState(false);
+  const [targetProfile, setTargetProfile] = useState<any>(null);
 
-  // Call simulator state
-  const [callActive, setCallActive] = useState(false);
-  const [callType, setCallType] = useState<'audio' | 'video'>('audio');
-  const [callDuration, setCallDuration] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isCameraOff, setIsCameraOff] = useState(false);
+  // Missing Phone Modal State
+  const [missingPhoneModalOpen, setMissingPhoneModalOpen] = useState(false);
+  const [missingPhoneUser, setMissingPhoneUser] = useState<'me' | 'other' | 'both'>('me');
+
+  // Review Modal State
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [emojiModalOpen, setEmojiModalOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -77,12 +74,18 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
     fetchConvs();
   }, [currentUser, initialConversationId]);
 
-  // Load active conversation messages and linked donation
+  // Load active conversation messages, linked donation & target profile
   useEffect(() => {
-    if (!activeConv) return;
+    if (!activeConv || !currentUser) return;
 
     // Fetch linked donation
     donationService.getDonationById(activeConv.donationId).then(setLinkedDonation);
+
+    // Fetch target profile
+    const targetUid = activeConv.donorUid === currentUser.uid ? activeConv.beneficiaryUid : activeConv.donorUid;
+    import('@/services/userService').then(({ userService }) => {
+      userService.getUserProfile(targetUid).then(setTargetProfile).catch(console.warn);
+    });
 
     // Subscribe to messages
     const unsubscribe = chatService.subscribeToMessages(
@@ -96,20 +99,7 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
     );
 
     return () => unsubscribe();
-  }, [activeConv]);
-
-  // Call timer simulation
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (callActive) {
-      timer = setInterval(() => {
-        setCallDuration(prev => prev + 1);
-      }, 1000);
-    } else {
-      setCallDuration(0);
-    }
-    return () => clearInterval(timer);
-  }, [callActive]);
+  }, [activeConv, currentUser]);
 
   if (!currentUser) {
     return (
@@ -123,7 +113,7 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
         </p>
         <button
           onClick={onOpenAuthModal}
-          className="px-6 py-2.5 bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-xs"
+          className="px-6 py-2.5 bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-xs cursor-pointer"
         >
           Se connecter
         </button>
@@ -133,9 +123,11 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
 
   const isDonor = activeConv?.donorUid === currentUser.uid;
   const isBeneficiary = activeConv?.beneficiaryUid === currentUser.uid;
+  const isAvailable = linkedDonation?.status === 'DISPONIBLE';
   const isReserved = linkedDonation?.status === 'RESERVE';
   const isRecovered = linkedDonation?.status === 'RECUPERE';
-  const isAvailable = linkedDonation?.status === 'DISPONIBLE';
+  const isAccepted = linkedDonation?.acceptedByBeneficiary;
+  const isDelivered = linkedDonation?.deliveredByDonor;
 
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -165,21 +157,45 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
 
   const getCleanErrorMessage = (err: any): string => {
     const msg = err?.message || String(err);
-    try {
-      const parsed = JSON.parse(msg);
-      if (parsed && parsed.error) {
-        if (parsed.error.includes('Missing or insufficient permissions')) {
-          return 'Erreur de permissions (règles de sécurité Firestore). Vérifiez que vous êtes bien connecté en tant que propriétaire.';
-        }
-        return parsed.error;
-      }
-    } catch (e) {
-      // not JSON
-    }
     if (msg.includes('Missing or insufficient permissions')) {
       return 'Erreur de permissions (règles de sécurité Firestore).';
     }
     return msg;
+  };
+
+  // WhatsApp Call launcher
+  const handleWhatsAppCall = (type: 'audio' | 'video') => {
+    if (!activeConv || !currentUser) return;
+
+    const myPhone = userProfile?.phoneNumber?.trim();
+    const otherPhone = targetProfile?.phoneNumber?.trim();
+
+    const hasMyPhone = !!(myPhone && myPhone.length >= 8);
+    const hasOtherPhone = !!(otherPhone && otherPhone.length >= 8);
+
+    if (!hasMyPhone || !hasOtherPhone) {
+      if (!hasMyPhone && !hasOtherPhone) setMissingPhoneUser('both');
+      else if (!hasMyPhone) setMissingPhoneUser('me');
+      else setMissingPhoneUser('other');
+      setMissingPhoneModalOpen(true);
+      return;
+    }
+
+    const cleanPhone = otherPhone.replace(/[^0-9]/g, '');
+    const waText = encodeURIComponent(
+      `Bonjour ${isDonor ? activeConv.beneficiaryName : activeConv.donorName}, je vous contacte depuis Zarazarao au sujet du don « ${linkedDonation?.title || activeConv.donationTitle} ».`
+    );
+    const waUrl = `https://wa.me/${cleanPhone}?text=${waText}`;
+
+    window.open(waUrl, '_blank');
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = new Date().toLocaleDateString('fr-FR');
+    chatService.sendSystemMessage(
+      activeConv.id,
+      'WHATSAPP_CALL',
+      `📞 Appel WhatsApp ${type === 'video' ? 'vidéo' : 'vocal'} émis le ${dateStr} à ${timeStr} • Numéros (${myPhone} ↔ ${otherPhone})`
+    ).catch(console.warn);
   };
 
   // Donor reserves donation for this conversation's beneficiary
@@ -196,6 +212,25 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
         currentUser.uid,
         activeConv.beneficiaryUid,
         activeConv.beneficiaryName,
+        activeConv.id
+      );
+      const updated = await donationService.getDonationById(linkedDonation.id);
+      setLinkedDonation(updated);
+    } catch (err: any) {
+      alert(getCleanErrorMessage(err));
+    }
+  };
+
+  // Beneficiary accepts reservation
+  const handleAcceptReservation = async () => {
+    if (!linkedDonation || !activeConv) return;
+    const confirmed = window.confirm(`Voulez-vous accepter la réservation pour « ${linkedDonation.title} » ?`);
+    if (!confirmed) return;
+
+    try {
+      await donationService.acceptDonationByBeneficiary(
+        linkedDonation.id,
+        currentUser.uid,
         activeConv.id
       );
       const updated = await donationService.getDonationById(linkedDonation.id);
@@ -225,12 +260,6 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
       alert(getCleanErrorMessage(err));
     }
   };
-
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [emojiModalOpen, setEmojiModalOpen] = useState(false);
 
   // Donor marks donation as delivered
   const handleMarkAsDelivered = async () => {
@@ -294,12 +323,6 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
     } catch (err: any) {
       alert(getCleanErrorMessage(err));
     }
-  };
-
-  const formatCallTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -371,7 +394,7 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setActiveConv(null)}
-                  className="md:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
+                  className="md:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
@@ -405,81 +428,105 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
                 </div>
               </div>
 
-              {/* Call Simulation Buttons */}
+              {/* Direct WhatsApp Call Action Buttons */}
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => { setCallType('audio'); setCallActive(true); }}
-                  className="p-2 rounded-xl text-gray-600 hover:text-emerald-800 hover:bg-gray-100 transition-colors"
-                  title="Appel audio gratuit"
+                  onClick={() => handleWhatsAppCall('audio')}
+                  className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold transition-colors flex items-center gap-1 text-xs cursor-pointer shadow-2xs"
+                  title="Appeler via WhatsApp Vocal"
                 >
-                  <Phone className="w-4 h-4" />
+                  <Phone className="w-4 h-4 text-emerald-700" />
+                  <span className="hidden sm:inline">Vocal WhatsApp</span>
                 </button>
                 <button
-                  onClick={() => { setCallType('video'); setCallActive(true); }}
-                  className="p-2 rounded-xl text-gray-600 hover:text-emerald-800 hover:bg-gray-100 transition-colors"
-                  title="Appel vidéo gratuit"
+                  onClick={() => handleWhatsAppCall('video')}
+                  className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold transition-colors flex items-center gap-1 text-xs cursor-pointer shadow-2xs"
+                  title="Appeler via WhatsApp Vidéo"
                 >
-                  <Video className="w-4 h-4" />
+                  <Video className="w-4 h-4 text-emerald-700" />
+                  <span className="hidden sm:inline">Vidéo WhatsApp</span>
                 </button>
               </div>
             </div>
 
-            {/* Synchronized Action Banner (CRITICAL RESERVATION CONTROLS) */}
+            {/* Revocable Multi-Step Handover Tracking Banner */}
             <div className="bg-emerald-50 px-4 py-2.5 border-b border-emerald-100 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-1.5 text-emerald-950 font-medium">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>
                   {isAvailable && isDonor && 'Vous pouvez réserver cet objet pour cet interlocuteur.'}
-                  {isAvailable && !isDonor && 'Convenez des modalités de remise avec le donateur.'}
-                  {isReserved && isDonor && 'Objet réservé. En attente de remise et de confirmation par le bénéficiaire.'}
-                  {isReserved && isBeneficiary && 'Cet objet est réservé pour vous ! Confirmez une fois en main.'}
-                  {isRecovered && 'Don confirmé et récupéré ! Merci pour votre partage.'}
+                  {isAvailable && !isDonor && 'En attente d’une réservation du donateur.'}
+                  {isReserved && !isAccepted && isDonor && 'Objet réservé. En attente d’acceptation par le bénéficiaire.'}
+                  {isReserved && !isAccepted && isBeneficiary && '🎉 Le donateur vous a réservé ce don ! Acceptez la réservation.'}
+                  {isReserved && isAccepted && !isDelivered && isDonor && '✅ Réservation acceptée ! Vous pouvez effectuer la remise et marquer comme livré.'}
+                  {isReserved && isAccepted && !isDelivered && isBeneficiary && 'Réservation acceptée. En attente de la livraison par le donateur.'}
+                  {isReserved && isDelivered && isDonor && '🚚 Vous avez marqué ce don comme livré. En attente de confirmation finale.'}
+                  {isReserved && isDelivered && isBeneficiary && '🚚 Le donateur a marqué le don comme livré ! Confirmez la réception.'}
+                  {isRecovered && '✨ Don transmis et réception confirmée ! Merci pour votre solidarité Fihavanana.'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Action Buttons State Machine */}
+              <div className="flex flex-wrap items-center gap-2">
+                
+                {/* 1. Donor reserves donation */}
                 {isDonor && isAvailable && (
                   <button
                     onClick={handleReserveDonation}
-                    className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl shadow-2xs transition-colors"
+                    className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl shadow-2xs transition-colors cursor-pointer"
                   >
                     Réserver pour ce bénéficiaire
                   </button>
                 )}
 
-                {isDonor && isReserved && (
+                {/* 2. Beneficiary accepts reservation */}
+                {isBeneficiary && isReserved && !isAccepted && (
+                  <button
+                    onClick={handleAcceptReservation}
+                    className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1 cursor-pointer animate-pulse"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Accepter la réservation</span>
+                  </button>
+                )}
+
+                {/* 3. Donor marks as delivered */}
+                {isDonor && isReserved && isAccepted && (
                   <button
                     onClick={handleMarkAsDelivered}
-                    className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                    className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-300" />
-                    <span>Marquer comme livré</span>
+                    <span>{isDelivered ? 'Don marqué livré (Mis à jour)' : 'Marquer comme livré'}</span>
                   </button>
                 )}
 
-                {isBeneficiary && isReserved && (
+                {/* 4. Beneficiary confirms reception */}
+                {isBeneficiary && isReserved && isDelivered && (
                   <button
                     onClick={handleConfirmReceived}
-                    className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                    className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-300" />
-                    <span>Oui, j'ai reçu le don</span>
+                    <span>Oui, j'ai bien reçu l'objet</span>
                   </button>
                 )}
 
+                {/* Review button */}
                 {isRecovered && isBeneficiary && (
                   <button
                     onClick={() => setReviewModalOpen(true)}
-                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     ⭐ Noter le donateur
                   </button>
                 )}
 
+                {/* Revocable cancel reservation button available until final confirmation */}
                 {isReserved && (isDonor || isBeneficiary) && (
                   <button
                     onClick={handleCancelReservation}
-                    className="px-2.5 py-1.5 bg-white border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 font-semibold rounded-xl text-[11px] transition-colors"
+                    className="px-2.5 py-1.5 bg-white border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 font-semibold rounded-xl text-[11px] transition-colors cursor-pointer"
                   >
                     Annuler la réservation
                   </button>
@@ -545,7 +592,7 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
               <button
                 type="button"
                 onClick={() => setEmojiModalOpen(true)}
-                className="p-2.5 text-gray-500 hover:text-emerald-700 hover:bg-gray-100 rounded-xl transition-colors shrink-0"
+                className="p-2.5 text-gray-500 hover:text-emerald-700 hover:bg-gray-100 rounded-xl transition-colors shrink-0 cursor-pointer"
                 title="Ouvrir la banque d'émojis"
               >
                 <Smile className="w-5 h-5" />
@@ -580,66 +627,58 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
 
       </div>
 
-      {/* Real-time WebRTC Audio/Video Call Simulation Dialog */}
-      {callActive && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-gray-900 rounded-3xl max-w-sm w-full p-8 text-center text-white space-y-6 shadow-2xl border border-gray-800 relative">
+      {/* Missing Phone Number Alert Modal */}
+      {missingPhoneModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-emerald-100 text-gray-900">
+            <div className="w-14 h-14 bg-amber-100 text-amber-800 rounded-2xl flex items-center justify-center mx-auto text-2xl">
+              📱
+            </div>
             
-            <div className="w-24 h-24 mx-auto rounded-full bg-emerald-800 border-4 border-emerald-500 flex items-center justify-center text-4xl animate-pulse">
-              {callType === 'video' ? '📹' : '📞'}
+            <div className="text-center space-y-1.5">
+              <h3 className="text-lg font-black text-gray-900">Numéro de Téléphone Requis</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                {missingPhoneUser === 'me' && (
+                  <>Pour effectuer des appels WhatsApp directs, vous devez d'abord ajouter votre numéro de téléphone dans votre profil Zarazarao.</>
+                )}
+                {missingPhoneUser === 'other' && (
+                  <>L'interlocuteur (<strong>{isDonor ? activeConv?.beneficiaryName : activeConv?.donorName}</strong>) n'a pas encore renseigné son numéro de téléphone mobile dans son profil.</>
+                )}
+                {missingPhoneUser === 'both' && (
+                  <>Un numéro de téléphone valide enregistré dans les profils respectifs est requis pour passer des appels WhatsApp.</>
+                )}
+              </p>
             </div>
 
-            <div className="space-y-1">
-              <h3 className="text-xl font-black">
-                {isDonor ? activeConv?.beneficiaryName : activeConv?.donorName}
-              </h3>
-              <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
-                Appel {callType} en cours ({formatCallTime(callDuration)})
-              </p>
-              <p className="text-[10px] text-gray-400">
-                Protocole WebRTC sécurisé • Zarazarao Audio/Vidéo
+            <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-100 text-xs text-emerald-900 space-y-1">
+              <p className="font-bold text-emerald-950">💡 Pourquoi cette mesure ?</p>
+              <p className="text-[11px] leading-relaxed text-emerald-800">
+                La mise en relation WhatsApp s'appuie directement sur les numéros vérifiés des profils pour garantir la sécurité et la traçabilité des échanges solidaire.
               </p>
             </div>
 
-            {callType === 'video' && !isCameraOff && (
-              <div className="aspect-4/3 rounded-2xl bg-gray-800 overflow-hidden relative flex items-center justify-center border border-gray-700">
-                <span className="text-xs text-gray-400">Flux vidéo direct activé</span>
-              </div>
-            )}
-
-            {/* Media Controls */}
-            <div className="flex justify-center items-center gap-4 pt-2">
+            <div className="flex gap-3 pt-2">
               <button
-                onClick={() => setIsMuted(!isMuted)}
-                className={`p-3.5 rounded-full transition-colors ${
-                  isMuted ? 'bg-amber-600 text-white' : 'bg-gray-800 hover:bg-gray-700 text-gray-200'
-                }`}
-                title={isMuted ? 'Activer le micro' : 'Couper le micro'}
+                type="button"
+                onClick={() => setMissingPhoneModalOpen(false)}
+                className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
               >
-                {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                Fermer
               </button>
 
-              {callType === 'video' && (
+              {(missingPhoneUser === 'me' || missingPhoneUser === 'both') && (
                 <button
-                  onClick={() => setIsCameraOff(!isCameraOff)}
-                  className={`p-3.5 rounded-full transition-colors ${
-                    isCameraOff ? 'bg-amber-600 text-white' : 'bg-gray-800 hover:bg-gray-700 text-gray-200'
-                  }`}
-                  title={isCameraOff ? 'Allumer la caméra' : 'Couper la caméra'}
+                  type="button"
+                  onClick={() => {
+                    setMissingPhoneModalOpen(false);
+                    onNavigate('profile');
+                  }}
+                  className="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
                 >
-                  <VideoOff className="w-5 h-5" />
+                  Compléter mon profil
                 </button>
               )}
-
-              <button
-                onClick={() => setCallActive(false)}
-                className="p-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors"
-                title="Raccrocher"
-              >
-                <PhoneOff className="w-5 h-5" />
-              </button>
             </div>
-
           </div>
         </div>
       )}
@@ -669,7 +708,7 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
                       type="button"
                       key={star}
                       onClick={() => setRating(star)}
-                      className={`text-3xl transition-transform hover:scale-110 ${star <= rating ? 'text-amber-400' : 'text-gray-300'}`}
+                      className={`text-3xl transition-transform hover:scale-110 cursor-pointer ${star <= rating ? 'text-amber-400' : 'text-gray-300'}`}
                     >
                       ★
                     </button>
@@ -692,13 +731,13 @@ export const MessagingPage: React.FC<MessagingPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setReviewModalOpen(false)}
-                    className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-colors"
+                    className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
                   >
                     Ignorer
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
+                    className="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
                   >
                     Publier l'avis
                   </button>

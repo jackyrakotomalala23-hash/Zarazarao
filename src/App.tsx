@@ -14,9 +14,11 @@ import { HowItWorksPage } from '@/pages/HowItWorksPage';
 import { CommunityRulesPage } from '@/pages/CommunityRulesPage';
 import { HelpCenterPage } from '@/pages/HelpCenterPage';
 import { LegalPage } from '@/pages/LegalPage';
+import { CGUPage } from '@/pages/CGUPage';
+import { DataPrivacyPage } from '@/pages/DataPrivacyPage';
+import { CookieConsentModal } from '@/components/common/CookieConsentModal';
 import { UserDashboardPage } from '@/pages/UserDashboardPage';
 import { MessagingPage } from '@/pages/MessagingPage';
-import { StorePartnerVerificationPage } from '@/pages/StorePartnerVerificationPage';
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage';
 import { ProfileManagementPage } from '@/pages/ProfileManagementPage';
 import { ContactPage } from '@/pages/ContactPage';
@@ -43,30 +45,39 @@ function AppContent() {
     checkAndSeedInitialData().catch(console.warn);
 
     try {
+      const fullUrl = window.location.href;
       const searchParams = new URLSearchParams(window.location.search);
       let modeParam = searchParams.get('mode');
       let oobCodeParam = searchParams.get('oobCode');
 
-      // Also parse hash or full URL in case Firebase passes parameters in fragment
-      if (!oobCodeParam && window.location.href.includes('oobCode=')) {
-        const match = window.location.href.match(/oobCode=([^&]+)/);
+      // Robust regex extraction for oobCode and mode across search and hash
+      if (!oobCodeParam && fullUrl.includes('oobCode=')) {
+        const match = fullUrl.match(/oobCode=([^&/#]+)/);
         if (match && match[1]) {
           oobCodeParam = decodeURIComponent(match[1]);
         }
       }
-      if (!modeParam && window.location.href.includes('mode=')) {
-        const matchMode = window.location.href.match(/mode=([^&]+)/);
+      if (!modeParam && fullUrl.includes('mode=')) {
+        const matchMode = fullUrl.match(/mode=([^&/#]+)/);
         if (matchMode && matchMode[1]) {
           modeParam = decodeURIComponent(matchMode[1]);
         }
       }
 
-      if (modeParam === 'resetPassword' || oobCodeParam || window.location.href.includes('resetPassword')) {
+      // If URL has oobCode or resetPassword, automatically display the in-app password reset modal!
+      if (oobCodeParam || modeParam === 'resetPassword' || fullUrl.includes('resetPassword') || fullUrl.includes('oobCode')) {
         if (oobCodeParam) {
           setResetOobCode(oobCodeParam);
         }
         setAuthModalMode('reset_confirm');
         setAuthModalOpen(true);
+
+        // Clean up parameters in address bar without page refresh
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (hErr) {
+          console.warn('Could not replace history state:', hErr);
+        }
       }
     } catch (e) {
       console.warn('URL param parsing error:', e);
@@ -99,6 +110,17 @@ function AppContent() {
       setPageParams(params);
     }
   };
+
+  // Global custom navigation listener for links inside auth modals or notifications
+  useEffect(() => {
+    const handleCustomNavigate = (e: any) => {
+      if (e.detail) {
+        navigate(e.detail);
+      }
+    };
+    window.addEventListener('navigate-app', handleCustomNavigate);
+    return () => window.removeEventListener('navigate-app', handleCustomNavigate);
+  }, []);
 
   return (
     <div 
@@ -199,6 +221,14 @@ function AppContent() {
           <LegalPage />
         )}
 
+        {currentPage === 'cgu' && (
+          <CGUPage onNavigate={navigate} />
+        )}
+
+        {currentPage === 'data-privacy' && (
+          <DataPrivacyPage onNavigate={navigate} />
+        )}
+
         {currentPage === 'profile' && (
           <ProfileManagementPage
             onNavigate={navigate}
@@ -220,10 +250,6 @@ function AppContent() {
             onNavigate={navigate}
             onOpenAuthModal={() => setAuthModalOpen(true)}
           />
-        )}
-
-        {currentPage === 'store-verify' && (
-          <StorePartnerVerificationPage />
         )}
 
         {currentPage === 'admin' && (
@@ -257,6 +283,9 @@ function AppContent() {
         initialMode={authModalMode}
         oobCode={resetOobCode}
       />
+
+      {/* Cookie Consent Modal */}
+      <CookieConsentModal onNavigate={navigate} />
 
       {/* ZaraBot AI Guide & Google Maps Assistant */}
       <ZaraBotChatbot />

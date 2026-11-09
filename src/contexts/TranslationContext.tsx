@@ -263,7 +263,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     // Footer
     'footer.philosophy': 'Philosophie Fihavanana & Firaisankina',
     'footer.quote': '« Un objet dont tu n’as plus besoin peut changer la vie de quelqu’un. »',
-    'footer.desc': 'Partageons plus. Gaspillons moins. Aidons-nous davantage à Madagascar et partout en Afrique.',
+    'footer.desc': 'Partageons plus. Gaspillons moins. Aidons-nous davantage à Madagascar.',
     'footer.platform': 'La Plateforme',
     'footer.loyalty': 'Fidélité & Coupons',
     'footer.rules': 'Règles & Sécurité',

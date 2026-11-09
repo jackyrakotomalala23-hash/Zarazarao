@@ -27,12 +27,14 @@ import {
   Award,
   Shield,
   Layers,
-  Heart
+  Heart,
+  Star
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { chatService } from '@/services/chatService';
 import { donationService } from '@/services/donationService';
+import { reviewService, Review } from '@/services/reviewService';
 import { Conversation, Donation, UserProfile } from '@/types';
 import confetti from 'canvas-confetti';
 
@@ -77,7 +79,23 @@ export const ProfileManagementPage: React.FC<ProfileManagementPageProps> = ({
   const { currentUser, userProfile, updateUserProfileData, refreshProfile } = useAuth();
   const { t } = useTranslation();
 
-  const [activeTab, setActiveTab] = useState<'infos' | 'photos' | 'security' | 'privacy' | 'relations'>('infos');
+  const [activeTab, setActiveTab] = useState<'infos' | 'photos' | 'security' | 'privacy' | 'relations' | 'reviews'>('infos');
+
+  // Reviews state
+  const [userReviews, setUserReviews] = useState<Review[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+
+  useEffect(() => {
+    async function loadReviews() {
+      if (currentUser) {
+        setLoadingReviews(true);
+        const list = await reviewService.getReviewsForDonor(currentUser.uid);
+        setUserReviews(list);
+        setLoadingReviews(false);
+      }
+    }
+    loadReviews();
+  }, [currentUser?.uid]);
 
   // Personal Info Form State
   const [firstName, setFirstName] = useState(userProfile?.firstName || '');
@@ -436,6 +454,11 @@ export const ProfileManagementPage: React.FC<ProfileManagementPageProps> = ({
                 <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 uppercase tracking-widest">
                   {userProfile.role === 'admin' ? 'Super Admin' : 'Membre Fihavanana'}
                 </span>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold">
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                  <span>{userProfile.averageRating ? userProfile.averageRating.toFixed(1) : '5.0'} / 5</span>
+                  <span className="text-amber-700 font-normal">({userProfile.reviewsCount || userReviews.length} avis)</span>
+                </div>
                 {userProfile.mfaEnabled && (
                   <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
@@ -509,7 +532,8 @@ export const ProfileManagementPage: React.FC<ProfileManagementPageProps> = ({
           { id: 'photos', label: 'Photos & Habillage', icon: ImageIcon },
           { id: 'security', label: 'Sécurité & Double Auth (MFA)', icon: ShieldCheck },
           { id: 'privacy', label: 'Confidentialité & Alertes', icon: Settings },
-          { id: 'relations', label: `Interactions & Contacts (${interactedUsers.length})`, icon: Users }
+          { id: 'relations', label: `Interactions & Contacts (${interactedUsers.length})`, icon: Users },
+          { id: 'reviews', label: `Avis & Évaluations ⭐ (${userReviews.length})`, icon: Star }
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -1112,6 +1136,78 @@ export const ProfileManagementPage: React.FC<ProfileManagementPageProps> = ({
                         <MessageSquare className="w-4 h-4" />
                       </button>
                     )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 6. TAB 6: AVIS & ÉVALUATIONS DES MEMBRES */}
+      {activeTab === 'reviews' && (
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+            <div>
+              <h3 className="text-lg font-black text-gray-900 flex items-center gap-2">
+                <Star className="w-5 h-5 text-amber-500 fill-amber-400" />
+                <span>Avis & Évaluations reçus de la communauté</span>
+              </h3>
+              <p className="text-xs text-gray-500">
+                L'évaluation globale est calculée automatiquement à partir de la moyenne des notes (1 à 5 étoiles) attribuées par vos bénéficiaires et donateurs.
+              </p>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 px-5 py-3 rounded-2xl text-center shrink-0">
+              <div className="text-2xl font-black text-amber-900 flex items-center justify-center gap-1">
+                <span>{userProfile.averageRating ? userProfile.averageRating.toFixed(1) : '5.0'}</span>
+                <span className="text-sm font-bold text-amber-600">/ 5</span>
+              </div>
+              <div className="text-[11px] font-bold text-amber-800">
+                {userReviews.length} évaluation{userReviews.length > 1 ? 's' : ''}
+              </div>
+            </div>
+          </div>
+
+          {loadingReviews ? (
+            <div className="py-12 text-center text-xs text-gray-500">Chargement des avis...</div>
+          ) : userReviews.length === 0 ? (
+            <div className="p-8 text-center bg-gray-50 rounded-2xl space-y-2">
+              <div className="text-2xl">⭐</div>
+              <h4 className="font-bold text-sm text-gray-900">Aucun avis publié pour le moment</h4>
+              <p className="text-xs text-gray-500 max-w-md mx-auto">
+                Vos futurs bénéficiaires pourront vous laisser un commentaire et une note étoilée après la remise réussie d'un don.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {userReviews.map((rev) => (
+                <div key={rev.id} className="p-4 bg-gray-50/80 rounded-2xl border border-gray-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={rev.beneficiaryPhoto || `https://api.dicebear.com/7.x/initials/svg?seed=${rev.beneficiaryName}`}
+                        alt={rev.beneficiaryName}
+                        className="w-8 h-8 rounded-full object-cover border border-emerald-200"
+                      />
+                      <div>
+                        <div className="font-bold text-xs text-gray-900">{rev.beneficiaryName}</div>
+                        <div className="text-[10px] text-gray-400">Pour le don : {rev.donationTitle}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full text-xs font-black">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
+                      <span>{rev.rating} / 5</span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-700 italic bg-white p-3 rounded-xl border border-gray-100">
+                    « {rev.comment} »
+                  </p>
+
+                  <div className="text-[10px] text-gray-400 text-right">
+                    {new Date(rev.createdAt).toLocaleDateString('fr-FR')}
                   </div>
                 </div>
               ))}

@@ -62,11 +62,11 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-emerald-700 shrink-0" />
-                <span>+261 34 00 000 00 / +261 33 00 000 00</span>
+                <span className="font-bold text-gray-900">+261 37 53 336 29</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-emerald-700 shrink-0" />
-                <span>contact@zarazarao.mg</span>
+                <span className="font-bold text-gray-900">zarazaraomada@gmail.com</span>
               </div>
             </div>
           </div>

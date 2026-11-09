@@ -20,7 +20,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onNavigate,
   onOpenAuthModal
 }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile } = useAuth();
 
   const navItems = [
     { 
@@ -94,6 +94,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             );
           }
 
+          const userAvatar = userProfile?.photoURL || currentUser?.photoURL;
+
           return (
             <button
               key={item.id}
@@ -106,7 +108,17 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               title={item.label}
               aria-label={item.label}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5] text-emerald-800 dark:text-emerald-300' : 'stroke-[1.75]'}`} />
+              {item.id === 'profile' && currentUser ? (
+                <div className={`w-6 h-6 rounded-full overflow-hidden border-2 transition-all shrink-0 ${isActive ? 'border-emerald-700 dark:border-emerald-300 scale-110' : 'border-gray-300 dark:border-slate-600'}`}>
+                  <img
+                    src={userAvatar || `https://api.dicebear.com/7.x/initials/svg?seed=${userProfile?.displayName || 'ZZ'}`}
+                    alt={userProfile?.displayName || 'Profil'}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5] text-emerald-800 dark:text-emerald-300' : 'stroke-[1.75]'}`} />
+              )}
               
               {/* Active Dot */}
               {isActive && (

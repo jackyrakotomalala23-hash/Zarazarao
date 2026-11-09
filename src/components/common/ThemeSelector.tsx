@@ -28,22 +28,33 @@ export const ThemeSelector: React.FC = () => {
 
       {isOpen && (
         <>
+          {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40" 
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[9998]" 
             onClick={() => setIsOpen(false)} 
           />
-          <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1rem)] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 py-3 z-50 animate-in fade-in zoom-in-95 max-h-[80vh] overflow-y-auto">
-            <div className="px-4 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <div className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                Personnalisation & Thèmes
+
+          {/* Dialog Container */}
+          <div className="fixed sm:absolute inset-x-4 sm:inset-auto top-20 sm:top-full sm:right-0 sm:mt-2 z-[9999] max-w-sm sm:w-64 bg-white dark:bg-slate-900 rounded-3xl sm:rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 sm:py-3 animate-in fade-in zoom-in-95 max-h-[85vh] overflow-y-auto mx-auto sm:mx-0">
+            <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800">
+              <div>
+                <div className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  Personnalisation & Thèmes
+                </div>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+                  Choisissez une palette d'apparence
+                </p>
               </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
-                Adaptez les palettes modernes et les dégradés
-              </p>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 sm:hidden text-xs font-bold"
+              >
+                ✕
+              </button>
             </div>
 
-            <div className="p-2 space-y-1">
+            <div className="p-1 pt-2 space-y-1">
               {themes.map((t) => {
                 const isSelected = theme === t.id;
                 return (
@@ -53,19 +64,19 @@ export const ThemeSelector: React.FC = () => {
                       setTheme(t.id);
                       setIsOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-xs font-medium transition-colors ${
+                    className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between text-xs font-medium transition-colors cursor-pointer ${
                       isSelected
-                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 font-bold'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800'
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className={`w-5 h-5 rounded-full ${t.colorClass} flex items-center justify-center text-[10px] shadow-xs`}>
+                      <span className={`w-6 h-6 rounded-full ${t.colorClass} flex items-center justify-center text-xs shadow-xs`}>
                         {t.icon}
                       </span>
-                      <span>{t.label}</span>
+                      <span className="text-xs font-semibold">{t.label}</span>
                     </div>
-                    {isSelected && <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
+                    {isSelected && <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />}
                   </button>
                 );
               })}

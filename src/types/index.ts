@@ -28,6 +28,8 @@ export interface UserProfile {
   alertCity?: string;
   savedCategories?: string[];
   notifyNewDonations?: boolean;
+  averageRating?: number;
+  reviewsCount?: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -71,6 +73,11 @@ export interface Donation {
   reservedForUid?: string;
   reservedForName?: string;
   reservedAt?: string;
+  reservedByDonor?: boolean;
+  acceptedByBeneficiary?: boolean;
+  deliveredByDonor?: boolean;
+  acceptedAt?: string;
+  deliveredAt?: string;
   recoveredAt?: string;
   createdAt: string;
   updatedAt?: string;
@@ -109,7 +116,7 @@ export interface Message {
   senderName: string;
   text: string;
   mediaUrls?: string[];
-  systemEventType?: 'RESERVATION_CREATED' | 'RESERVATION_CANCELLED' | 'DONATION_RECOVERED' | 'DONATION_AVAILABLE';
+  systemEventType?: 'RESERVATION_CREATED' | 'RESERVATION_CANCELLED' | 'RESERVATION_ACCEPTED' | 'DONATION_DELIVERED' | 'DONATION_RECOVERED' | 'DONATION_AVAILABLE' | 'WHATSAPP_CALL';
   createdAt: string;
 }
 

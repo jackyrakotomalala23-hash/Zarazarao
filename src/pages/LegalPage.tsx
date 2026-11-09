@@ -38,7 +38,7 @@ export const LegalPage: React.FC = () => {
             Article 1 — Objet et Champ d'Application
           </h2>
           <p>
-            Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès, l'inscription et l'utilisation de la plateforme web et mobile Zarazarao, éditée pour la mise en relation gratuite entre particuliers désireux de donner des objets dont ils n'ont plus l'utilité à Madagascar et en Afrique.
+            Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès, l'inscription et l'utilisation de la plateforme web et mobile Zarazarao, éditée pour la mise en relation gratuite entre particuliers désireux de donner des objets dont ils n'ont plus l'utilité à Madagascar.
           </p>
           <p>
             L'utilisation de la plateforme implique l'acceptation entière et sans réserve de la présente charte par l'utilisateur (ci-après « Membre »).

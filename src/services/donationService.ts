@@ -219,7 +219,7 @@ export const donationService = {
     }
   },
 
-  // Reserve donation for a beneficiary
+  // Reserve donation for a beneficiary by donor
   async reserveDonation(
     donationId: string,
     donorUid: string,
@@ -245,12 +245,15 @@ export const donationService = {
         }
 
         const now = new Date().toISOString();
-        // Update donation
+        // Update donation status & state flags
         transaction.update(donationRef, {
           status: 'RESERVE',
           reservedForUid: beneficiaryUid,
           reservedForName: beneficiaryName,
           reservedAt: now,
+          reservedByDonor: true,
+          acceptedByBeneficiary: false,
+          deliveredByDonor: false,
           updatedAt: now
         });
 
@@ -274,7 +277,7 @@ export const donationService = {
       await chatService.sendSystemMessage(
         conversationId,
         'RESERVATION_CREATED',
-        `🎉 Bonne nouvelle ! Le donateur a réservé cet objet pour vous. Rendez-vous pour la remise et confirmez la réception une fois l'objet en main.`
+        `🎉 Le donateur a réservé cet objet pour vous ! Cliquez sur "Accepter le don" dans la barre de suivi ci-dessus pour confirmer votre accord.`
       );
 
       return res;
@@ -283,7 +286,43 @@ export const donationService = {
     }
   },
 
-  // Cancel reservation (can be triggered by donor or beneficiary)
+  // Beneficiary accepts reservation from donor
+  async acceptDonationByBeneficiary(
+    donationId: string,
+    beneficiaryUid: string,
+    conversationId: string
+  ): Promise<void> {
+    const donationRef = doc(db, 'donations', donationId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const dSnap = await transaction.get(donationRef);
+        if (!dSnap.exists()) throw new Error('Donation non trouvée.');
+        const donation = dSnap.data() as Donation;
+
+        if (donation.reservedForUid !== beneficiaryUid) {
+          throw new Error('Seul le bénéficiaire désigné peut accepter cette réservation.');
+        }
+
+        const now = new Date().toISOString();
+        transaction.update(donationRef, {
+          acceptedByBeneficiary: true,
+          acceptedAt: now,
+          updatedAt: now
+        });
+      });
+
+      await chatService.sendSystemMessage(
+        conversationId,
+        'RESERVATION_ACCEPTED',
+        `✅ Le bénéficiaire a accepté la réservation du don ! Le donateur peut à présent organiser la remise et marquer comme livré.`
+      );
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);
+    }
+  },
+
+  // Cancel reservation (revocable by donor or beneficiary at any stage)
   async cancelReservation(
     donationId: string,
     actorUid: string,
@@ -302,9 +341,6 @@ export const donationService = {
         if (donation.ownerUid !== actorUid && donation.reservedForUid !== actorUid) {
           throw new Error('Vous n’avez pas l’autorisation d’annuler cette réservation.');
         }
-        if (donation.status !== 'RESERVE') {
-          throw new Error('Ce don n’est pas en état de réservation active.');
-        }
 
         const now = new Date().toISOString();
         transaction.update(donationRef, {
@@ -312,6 +348,11 @@ export const donationService = {
           reservedForUid: null,
           reservedForName: null,
           reservedAt: null,
+          reservedByDonor: false,
+          acceptedByBeneficiary: false,
+          deliveredByDonor: false,
+          acceptedAt: null,
+          deliveredAt: null,
           updatedAt: now
         });
       });
@@ -321,46 +362,6 @@ export const donationService = {
         conversationId,
         'RESERVATION_CANCELLED',
         `⚠️ La réservation a été annulée par ${actorName} (${reason}). Le don est de nouveau disponible pour la communauté.`
-      );
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);
-    }
-  },
-
-  // Confirm receipt of donation by beneficiary
-  async confirmDonationReceived(
-    donationId: string,
-    beneficiaryUid: string,
-    conversationId: string
-  ): Promise<void> {
-    const donationRef = doc(db, 'donations', donationId);
-
-    try {
-      await runTransaction(db, async (transaction) => {
-        const dSnap = await transaction.get(donationRef);
-        if (!dSnap.exists()) throw new Error('Donation non trouvée.');
-        const donation = dSnap.data() as Donation;
-
-        if (donation.reservedForUid !== beneficiaryUid) {
-          throw new Error('Seul le bénéficiaire désigné peut confirmer la bonne réception du don.');
-        }
-        if (donation.status !== 'RESERVE') {
-          throw new Error('Le don doit être réservé pour pouvoir confirmer sa réception.');
-        }
-
-        const now = new Date().toISOString();
-        transaction.update(donationRef, {
-          status: 'RECUPERE',
-          recoveredAt: now,
-          updatedAt: now
-        });
-      });
-
-      // Send system message
-      await chatService.sendSystemMessage(
-        conversationId,
-        'DONATION_RECOVERED',
-        `✨ Don récupéré avec succès ! Merci de faire vivre la solidarité et le partage à Madagascar avec Zarazarao.`
       );
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);
@@ -387,16 +388,53 @@ export const donationService = {
 
         const now = new Date().toISOString();
         transaction.update(donationRef, {
-          status: 'RECUPERE',
-          recoveredAt: now,
+          deliveredByDonor: true,
+          deliveredAt: now,
           updatedAt: now
         });
       });
 
       await chatService.sendSystemMessage(
         conversationId,
+        'DONATION_DELIVERED',
+        `🚚 Le donateur a marqué l'objet comme livré ! Le bénéficiaire peut maintenant confirmer la réception finale dans la messagerie.`
+      );
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);
+    }
+  },
+
+  // Confirm receipt of donation by beneficiary (Final status RECUPERE)
+  async confirmDonationReceived(
+    donationId: string,
+    beneficiaryUid: string,
+    conversationId: string
+  ): Promise<void> {
+    const donationRef = doc(db, 'donations', donationId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const dSnap = await transaction.get(donationRef);
+        if (!dSnap.exists()) throw new Error('Donation non trouvée.');
+        const donation = dSnap.data() as Donation;
+
+        if (donation.reservedForUid !== beneficiaryUid) {
+          throw new Error('Seul le bénéficiaire désigné peut confirmer la bonne réception du don.');
+        }
+
+        const now = new Date().toISOString();
+        transaction.update(donationRef, {
+          status: 'RECUPERE',
+          recoveredAt: now,
+          updatedAt: now
+        });
+      });
+
+      // Send system message
+      await chatService.sendSystemMessage(
+        conversationId,
         'DONATION_RECOVERED',
-        `🚚 Le donateur a confirmé la remise de l'objet. Bon partage !`
+        `✨ Don récupéré et validé avec succès ! Merci de faire vivre la solidarité et le partage Fihavanana à Madagascar avec Zarazarao.`
       );
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `donations/${donationId}`);

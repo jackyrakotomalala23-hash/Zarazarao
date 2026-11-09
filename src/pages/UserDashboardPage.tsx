@@ -141,7 +141,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const totalInterests = myDonations.reduce((sum, d) => sum + (d.uniqueInterestsCount || 0), 0);
   const recoveryRate = totalPublished > 0 ? Math.round((recoveredCount / totalPublished) * 100) : 0;
 
-  // Complete profile check (bonus +10 pommes)
+  // Complete profile check (bonus +10 points)
   const isProfileComplete = Boolean(
     userProfile.firstName && userProfile.lastName && userProfile.city && userProfile.fokontany
   );
