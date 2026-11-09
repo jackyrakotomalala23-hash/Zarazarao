@@ -30,8 +30,18 @@ export interface UserProfile {
   notifyNewDonations?: boolean;
   averageRating?: number;
   reviewsCount?: number;
+  isVerified: boolean;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface SearchSubscription {
+  id: string;
+  uid: string;
+  searchQuery: string;
+  category?: string;
+  city?: string;
+  createdAt: string;
 }
 
 export interface UserPrivateInfo {
@@ -65,6 +75,7 @@ export interface Donation {
   city: string;
   fokontany: string;
   handoverMode: HandoverMode;
+  estUrgent: boolean;
   specialInstructions?: string;
   status: DonationStatus;
   viewsCount: number;

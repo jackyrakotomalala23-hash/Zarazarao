@@ -35,6 +35,7 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
   const [city, setCity] = useState(userProfile?.city || 'Antananarivo');
   const [fokontany, setFokontany] = useState('');
   const [handoverMode, setHandoverMode] = useState<HandoverMode>('pickup');
+  const [estUrgent, setEstUrgent] = useState(false);
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [primaryIndex, setPrimaryIndex] = useState(0);
@@ -103,6 +104,7 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
         city,
         fokontany: fokontany.trim(),
         handoverMode,
+        estUrgent,
         specialInstructions: specialInstructions.trim() || undefined
       });
 
@@ -330,18 +332,31 @@ export const PublishDonationPage: React.FC<PublishDonationPageProps> = ({
 
         </div>
 
-        {/* Step 6: Special Instructions (optional) */}
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-            Précisions particulières (facultatif)
-          </label>
-          <input
-            type="text"
-            value={specialInstructions}
-            onChange={(e) => setSpecialInstructions(e.target.value)}
-            placeholder="Ex: Objet lourd, prévoir 2 personnes • Disponible uniquement le samedi matin • Sac fourni"
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-hidden"
-          />
+        {/* Step 6: Special Instructions (optional) & Urgency */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+          <div className="md:col-span-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+              Précisions particulières (facultatif)
+            </label>
+            <input
+              type="text"
+              value={specialInstructions}
+              onChange={(e) => setSpecialInstructions(e.target.value)}
+              placeholder="Ex: Objet lourd, prévoir 2 personnes • Disponible uniquement le samedi matin • Sac fourni"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-hidden"
+            />
+          </div>
+          <div className="flex items-end">
+            <label className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl w-full cursor-pointer hover:bg-red-100 transition-colors">
+              <input
+                type="checkbox"
+                checked={estUrgent}
+                onChange={(e) => setEstUrgent(e.target.checked)}
+                className="w-5 h-5 accent-red-600 rounded"
+              />
+              <span className="text-xs font-bold text-red-900">Urgent (🔥)</span>
+            </label>
+          </div>
         </div>
 
         {/* Step 7: Truthfulness confirmation */}

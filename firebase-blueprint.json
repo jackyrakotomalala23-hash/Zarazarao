@@ -17,10 +17,25 @@
         "profileCompletionStatus": { "type": "boolean" },
         "signupBonusAwarded": { "type": "boolean" },
         "firstDonationBonusAwarded": { "type": "boolean" },
+        "isVerified": { "type": "boolean" },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["uid", "displayName", "city", "createdAt"]
+      "required": ["uid", "displayName", "city", "isVerified", "createdAt"]
+    },
+    "SearchSubscription": {
+      "title": "SearchSubscription",
+      "description": "User subscriptions to search queries for push alerts",
+      "type": "object",
+      "properties": {
+        "subscriptionId": { "type": "string" },
+        "uid": { "type": "string" },
+        "searchQuery": { "type": "string" },
+        "category": { "type": "string" },
+        "city": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["subscriptionId", "uid", "searchQuery", "createdAt"]
     },
     "UserPrivateInfo": {
       "title": "UserPrivateInfo",
@@ -51,6 +66,7 @@
         "city": { "type": "string" },
         "fokontany": { "type": "string" },
         "handoverMode": { "type": "string", "enum": ["pickup", "delivery", "discuss"] },
+        "estUrgent": { "type": "boolean" },
         "specialInstructions": { "type": "string" },
         "status": { "type": "string", "enum": ["DISPONIBLE", "RESERVE", "RECUPERE", "INDISPONIBLE", "ARCHIVE"] },
         "viewsCount": { "type": "number" },
@@ -63,7 +79,7 @@
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["donationId", "ownerUid", "title", "description", "category", "city", "fokontany", "status", "createdAt"]
+      "required": ["donationId", "ownerUid", "title", "description", "category", "city", "fokontany", "status", "estUrgent", "createdAt"]
     },
     "DonationInterest": {
       "title": "DonationInterest",
@@ -287,6 +303,10 @@
     "/admins/{adminUid}": {
       "schema": "Admin",
       "description": "Protected administrator whitelist"
+    },
+    "/searchSubscriptions/{subscriptionId}": {
+      "schema": "SearchSubscription",
+      "description": "User subscriptions to search queries"
     }
   }
 }

@@ -678,6 +678,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                     primaryImageUrl: '',
                     handoverMode: 'pickup',
                     status: 'DISPONIBLE',
+                    estUrgent: false,
                     viewsCount: 1,
                     uniqueInterestsCount: 1,
                     conversationsCount: 0,

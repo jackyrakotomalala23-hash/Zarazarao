@@ -59,6 +59,8 @@ export const donationService = {
 
       if (filters.limitCount) {
         q = query(q, limit(filters.limitCount));
+      } else {
+        q = query(q, limit(50)); // Default limit to improve initial load time
       }
 
       const snap = await getDocs(q);

@@ -22,7 +22,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Ankorondrano',
     handoverMode: 'pickup',
     specialInstructions: 'Meuble lourd, prévoir un véhicule adapté (pickup ou camionnette) et 2 personnes pour le portage.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 2. Informatique Toamasina ---
   {
@@ -42,7 +43,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Bazar Be',
     handoverMode: 'pickup',
     specialInstructions: 'Je privilégie un étudiant ou un lycéen méritant qui en a besoin pour ses examens officiels.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: true
   },
   // --- 3. Livres Antsirabe ---
   {
@@ -62,7 +64,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Mahazoarivo',
     handoverMode: 'pickup',
     specialInstructions: 'Remise possible près de la gare ou au carrefour Antsenakely en fin d’après-midi.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 4. Articles Bébés Mahajanga ---
   {
@@ -82,7 +85,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Majunga Be',
     handoverMode: 'discuss',
     specialInstructions: 'Possibilité de déposer devant le grand Baobab ou la Mairie si vous êtes à pied.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: true
   },
   // --- 5. Électroménager Antananarivo ---
   {
@@ -102,7 +106,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Mahamasina',
     handoverMode: 'pickup',
     specialInstructions: 'Remise à Mahamasina près du stade. Objet en fonte assez lourd.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 6. Sport Fianarantsoa ---
   {
@@ -122,7 +127,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Ampitakely',
     handoverMode: 'pickup',
     specialInstructions: 'Remise directe en mains propres près de la gare FCE.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 7. Vêtements Antananarivo ---
   {
@@ -142,7 +148,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Analakely',
     handoverMode: 'pickup',
     specialInstructions: 'Rendez-vous possible sur l’esplanade d’Analakely vers 12h ou 17h.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 8. Cuisine Toamasina ---
   {
@@ -162,7 +169,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Salazamay',
     handoverMode: 'pickup',
     specialInstructions: 'À récupérer sur Salazamay, prévoir un cabas ou un sac résistant.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 9. Bricolage Antananarivo ---
   {
@@ -182,7 +190,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Tanjombato',
     handoverMode: 'pickup',
     specialInstructions: 'À venir chercher près du pont de Tanjombato en journée.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 10. Jouets & Jeux Antsirabe ---
   {
@@ -202,7 +211,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Antsenakely',
     handoverMode: 'pickup',
     specialInstructions: 'À donner en priorité à un foyer, orphelinat ou famille nombreuse.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 11. Jardinage Antananarivo ---
   {
@@ -222,7 +232,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Itaosy',
     handoverMode: 'pickup',
     specialInstructions: 'À récupérer sur la route d’Itaosy le week-end.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 12. Décoration Mahajanga ---
   {
@@ -242,7 +253,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Tsaramandroso',
     handoverMode: 'discuss',
     specialInstructions: 'Objet délicat avec verre, remise en main propre recommandée.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 13. Informatique Antananarivo ---
   {
@@ -262,7 +274,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Isoraka',
     handoverMode: 'pickup',
     specialInstructions: 'Remise possible à Isoraka en face de l’Hôtel Colbert entre 12h et 14h.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 14. Accessoires Toliara ---
   {
@@ -282,7 +295,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Besakoa',
     handoverMode: 'pickup',
     specialInstructions: 'Remise en mains propres à Besakoa Toliara.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   },
   // --- 15. Électroménager Antsirabe ---
   {
@@ -302,7 +316,8 @@ export const SEED_DONATIONS: Omit<Donation, 'id' | 'viewsCount' | 'uniqueInteres
     fokontany: 'Vichy',
     handoverMode: 'pickup',
     specialInstructions: 'À récupérer près du parc de l’Hôtel des Thermes.',
-    status: 'DISPONIBLE'
+    status: 'DISPONIBLE',
+    estUrgent: false
   }
 ];
 
@@ -348,7 +363,8 @@ export async function forceSeedMoreSampleDonations(): Promise<number> {
         viewsCount: Math.floor(Math.random() * 85) + 15,
         uniqueInterestsCount: Math.floor(Math.random() * 25) + 4,
         conversationsCount: Math.floor(Math.random() * 6),
-        createdAt: new Date(Date.now() - Math.floor(Math.random() * 4 * 86400000)).toISOString()
+        createdAt: new Date(Date.now() - Math.floor(Math.random() * 4 * 86400000)).toISOString(),
+        estUrgent: false
       };
       await setDoc(doc(db, 'donations', id), donation);
       count++;

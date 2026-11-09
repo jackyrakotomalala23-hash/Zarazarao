@@ -66,6 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           profileCompletionStatus: false,
           signupBonusAwarded: true,
           firstDonationBonusAwarded: false,
+          isVerified: false,
           createdAt: new Date().toISOString()
         };
 
@@ -95,34 +96,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         profileCompletionStatus: false,
         signupBonusAwarded: true,
         firstDonationBonusAwarded: false,
+        isVerified: false,
         createdAt: new Date().toISOString()
       });
     }
   };
 
   useEffect(() => {
-    // Handle redirect result
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          console.log('Redirect sign-in successful');
-        }
-      })
-      .catch((error) => {
+    let isMounted = true;
+    
+    // We want to make sure we don't finish loading until the redirect result is handled
+    const initAuth = async () => {
+      try {
+        await getRedirectResult(auth);
+      } catch (error) {
         console.error('Redirect sign-in error:', error);
+      }
+      
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (!isMounted) return;
+        setCurrentUser(user);
+        if (user) {
+          await syncProfile(user);
+        } else {
+          setUserProfile(null);
+        }
+        setLoading(false);
       });
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
-      if (user) {
-        await syncProfile(user);
-      } else {
-        setUserProfile(null);
-      }
-      setLoading(false);
-    });
+      return unsubscribe;
+    };
 
-    return () => unsubscribe();
+    let unsubscribePromise = initAuth();
+
+    return () => {
+      isMounted = false;
+      unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
+    };
   }, []);
 
   const signInWithGoogle = async () => {
@@ -149,6 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       profileCompletionStatus: false,
       signupBonusAwarded: true,
       firstDonationBonusAwarded: false,
+      isVerified: false,
       createdAt: new Date().toISOString()
     };
 

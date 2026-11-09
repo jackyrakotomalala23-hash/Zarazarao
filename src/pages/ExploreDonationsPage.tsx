@@ -27,6 +27,7 @@ import { CATEGORIES, MADAGASCAR_CITIES } from '@/config/constants';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { formatPublicationDuration } from '@/utils/dateUtils';
 import { ZaraLoader } from '@/components/common/ZaraLoader';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ExploreDonationsPageProps {
   onNavigate: (page: string, params?: any) => void;
@@ -43,6 +44,7 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
   initialFilters = {}
 }) => {
   const { t } = useTranslation();
+  const { userProfile } = useAuth();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
@@ -84,7 +86,25 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
         minCondition,
         sortBy
       });
-      setDonations(data);
+
+      // Priority sort: Same Fokontany > Same City > Others
+      const sortedData = [...data].sort((a, b) => {
+        const userProfileCity = userProfile?.city?.toLowerCase();
+        const userProfileFokontany = userProfile?.fokontany?.toLowerCase();
+
+        const aCityMatch = a.city.toLowerCase() === userProfileCity;
+        const bCityMatch = b.city.toLowerCase() === userProfileCity;
+        const aFokontanyMatch = a.fokontany?.toLowerCase() === userProfileFokontany;
+        const bFokontanyMatch = b.fokontany?.toLowerCase() === userProfileFokontany;
+
+        if (aFokontanyMatch && !bFokontanyMatch) return -1;
+        if (!aFokontanyMatch && bFokontanyMatch) return 1;
+        if (aCityMatch && !bCityMatch) return -1;
+        if (!aCityMatch && bCityMatch) return 1;
+        return 0;
+      });
+
+      setDonations(sortedData);
     } catch (err) {
       console.error('Failed to load donations:', err);
     } finally {
@@ -541,6 +561,11 @@ export const ExploreDonationsPage: React.FC<ExploreDonationsPageProps> = ({
                       <span className="px-3 py-1 rounded-full text-[10px] font-black bg-emerald-700 text-white shadow-md flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
                         Disponible
+                      </span>
+                    )}
+                    {donation.estUrgent && (
+                      <span className="px-3 py-1 rounded-full text-[10px] font-black bg-red-600 text-white shadow-md flex items-center gap-1 animate-pulse">
+                        🔥 Urgent
                       </span>
                     )}
                     {isReserved && (
