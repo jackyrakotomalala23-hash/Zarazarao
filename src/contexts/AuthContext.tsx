@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   User as FirebaseUser, 
   onAuthStateChanged,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult, 
   GoogleAuthProvider, 
@@ -11,7 +12,9 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   verifyPasswordResetCode,
-  updateProfile
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
@@ -54,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = snap.data() as UserProfile;
         setUserProfile(data);
       } else {
-        // Initialize new user with 10 welcome apples!
+        // Initialize new user with 10 welcome points!
         const isBootstrapAdmin = user.email === 'jacky.rakotomalala23@gmail.com';
         const newProfile: UserProfile = {
           uid: user.uid,
@@ -105,14 +108,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let isMounted = true;
     
-    // We want to make sure we don't finish loading until the redirect result is handled
     const initAuth = async () => {
       try {
-        await getRedirectResult(auth);
-      } catch (error) {
-        console.error('Redirect sign-in error:', error);
+        await setPersistence(auth, browserLocalPersistence);
+      } catch (pErr) {
+        console.warn('Set persistence error:', pErr);
       }
-      
+
+      try {
+        const redirectRes = await getRedirectResult(auth);
+        if (redirectRes?.user && isMounted) {
+          setCurrentUser(redirectRes.user);
+          await syncProfile(redirectRes.user);
+        }
+      } catch (error) {
+        console.error('Redirect sign-in result error:', error);
+      }
+
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
         if (!isMounted) return;
         setCurrentUser(user);
@@ -127,17 +139,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return unsubscribe;
     };
 
-    let unsubscribePromise = initAuth();
+    let unsubscribeFn: (() => void) | undefined;
+    initAuth().then(unsub => {
+      unsubscribeFn = unsub;
+    });
 
     return () => {
       isMounted = false;
-      unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
+      if (unsubscribeFn) {
+        unsubscribeFn();
+      }
     };
   }, []);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithRedirect(auth, provider);
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const res = await signInWithPopup(auth, provider);
+      if (res.user) {
+        setCurrentUser(res.user);
+        await syncProfile(res.user);
+      }
+    } catch (err: any) {
+      console.warn('Google popup auth failed or blocked, attempting redirect fallback:', err);
+      if (
+        err?.code === 'auth/popup-blocked' ||
+        err?.code === 'auth/popup-closed-by-user' ||
+        err?.code === 'auth/cancelled-popup-request'
+      ) {
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw err;
+      }
+    }
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string, city: string, phone: string) => {
