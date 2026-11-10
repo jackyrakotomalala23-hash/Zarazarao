@@ -6,6 +6,7 @@ import {
   signInWithRedirect,
   getRedirectResult, 
   GoogleAuthProvider, 
+  FacebookAuthProvider,
   signOut as fbSignOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -29,6 +30,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isPartner: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithFacebook: () => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string, city: string, phone: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -47,22 +49,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Sync profile from Firestore
+  // Sync profile from Firestore, importing all OAuth provider data (Google & Meta/Facebook)
   const syncProfile = async (user: FirebaseUser) => {
     try {
       const userRef = doc(db, 'users', user.uid);
       const snap = await getDoc(userRef);
 
+      // Extract provider details if available (Google / Meta Facebook)
+      let providerPhoto = user.photoURL || '';
+      let providerName = user.displayName || '';
+      let providerEmail = user.email || '';
+      let providerPhone = user.phoneNumber || '';
+
+      user.providerData.forEach((p) => {
+        if (!providerPhoto && p.photoURL) providerPhoto = p.photoURL;
+        if (!providerName && p.displayName) providerName = p.displayName;
+        if (!providerEmail && p.email) providerEmail = p.email;
+        if (!providerPhone && p.phoneNumber) providerPhone = p.phoneNumber;
+      });
+
       if (snap.exists()) {
         const data = snap.data() as UserProfile;
-        setUserProfile(data);
+        // Update photo or name if missing or placeholder
+        const needsPhotoUpdate = (!data.photoURL || data.photoURL.includes('dicebear')) && providerPhoto;
+        const needsNameUpdate = !data.displayName && providerName;
+        
+        if (needsPhotoUpdate || needsNameUpdate) {
+          const updatedProfileData: Partial<UserProfile> = {
+            ...(needsPhotoUpdate ? { photoURL: providerPhoto } : {}),
+            ...(needsNameUpdate ? { displayName: providerName } : {}),
+            updatedAt: new Date().toISOString()
+          };
+          await setDoc(userRef, updatedProfileData, { merge: true });
+          setUserProfile({ ...data, ...updatedProfileData });
+        } else {
+          setUserProfile(data);
+        }
       } else {
-        // Initialize new user with 10 welcome points!
-        const isBootstrapAdmin = user.email === 'jacky.rakotomalala23@gmail.com';
+        // Initialize new user profile with 10 welcome points!
+        const isBootstrapAdmin = providerEmail === 'jacky.rakotomalala23@gmail.com';
         const newProfile: UserProfile = {
           uid: user.uid,
-          displayName: user.displayName || user.email?.split('@')[0] || 'Membre Zarazarao',
-          photoURL: user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName || 'ZZ'}`,
+          displayName: providerName || providerEmail.split('@')[0] || 'Membre Zarazarao',
+          photoURL: providerPhoto || `https://api.dicebear.com/7.x/initials/svg?seed=${providerName || 'ZZ'}`,
           city: 'Antananarivo',
           role: isBootstrapAdmin ? 'admin' : 'user',
           applesCount: 10,
@@ -77,6 +106,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await setDoc(userRef, newProfile);
         } catch (setErr) {
           console.warn('Could not save user profile doc:', setErr);
+        }
+
+        try {
+          // Private PII subcollection with email and phone from Facebook/Google
+          await setDoc(doc(db, 'users', user.uid, 'private', 'info'), {
+            email: providerEmail,
+            phoneNumber: providerPhone || '',
+            verifiedPhoneStatus: Boolean(providerPhone),
+            verifiedEmailStatus: Boolean(providerEmail),
+            address: 'Antananarivo'
+          }, { merge: true });
+        } catch (piiErr) {
+          console.warn('Error saving private user info:', piiErr);
         }
 
         try {
@@ -108,47 +150,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let isMounted = true;
     
-    const initAuth = async () => {
-      try {
-        await setPersistence(auth, browserLocalPersistence);
-      } catch (pErr) {
-        console.warn('Set persistence error:', pErr);
-      }
+    // Immediately enforce persistence on boot
+    setPersistence(auth, browserLocalPersistence).catch((pErr) => {
+      console.warn('Set persistence warning:', pErr);
+    });
 
-      try {
-        const redirectRes = await getRedirectResult(auth);
+    // Synchronously listen to onAuthStateChanged so mobile app shell gets state right away
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!isMounted) return;
+      setCurrentUser(user);
+      if (user) {
+        await syncProfile(user);
+      } else {
+        setUserProfile(null);
+      }
+      setLoading(false);
+    });
+
+    // Handle mobile redirect sign-in results asynchronously
+    getRedirectResult(auth)
+      .then(async (redirectRes) => {
         if (redirectRes?.user && isMounted) {
           setCurrentUser(redirectRes.user);
           await syncProfile(redirectRes.user);
+          setLoading(false);
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error('Redirect sign-in result error:', error);
-      }
-
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (!isMounted) return;
-        setCurrentUser(user);
-        if (user) {
-          await syncProfile(user);
-        } else {
-          setUserProfile(null);
-        }
-        setLoading(false);
       });
-
-      return unsubscribe;
-    };
-
-    let unsubscribeFn: (() => void) | undefined;
-    initAuth().then(unsub => {
-      unsubscribeFn = unsub;
-    });
 
     return () => {
       isMounted = false;
-      if (unsubscribeFn) {
-        unsubscribeFn();
-      }
+      unsubscribe();
     };
   }, []);
 
@@ -165,6 +199,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err: any) {
       console.warn('Google popup auth failed or blocked, attempting redirect fallback:', err);
+      if (
+        err?.code === 'auth/popup-blocked' ||
+        err?.code === 'auth/popup-closed-by-user' ||
+        err?.code === 'auth/cancelled-popup-request'
+      ) {
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw err;
+      }
+    }
+  };
+
+  const signInWithFacebook = async () => {
+    const provider = new FacebookAuthProvider();
+    provider.addScope('email');
+    provider.addScope('public_profile');
+
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const res = await signInWithPopup(auth, provider);
+      if (res.user) {
+        setCurrentUser(res.user);
+        await syncProfile(res.user);
+      }
+    } catch (err: any) {
+      console.warn('Facebook popup auth failed or blocked, attempting redirect fallback:', err);
       if (
         err?.code === 'auth/popup-blocked' ||
         err?.code === 'auth/popup-closed-by-user' ||
@@ -334,6 +394,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAdmin,
         isPartner,
         signInWithGoogle,
+        signInWithFacebook,
         signUpWithEmail,
         signInWithEmail,
         resetPassword,
@@ -357,3 +418,4 @@ export const useAuth = () => {
   }
   return context;
 };
+
