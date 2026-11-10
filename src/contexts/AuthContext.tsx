@@ -23,6 +23,30 @@ import { UserProfile, UserRole } from '@/types';
 import { loyaltyService } from '@/services/loyaltyService';
 import { sanitizeForFirestore } from '@/services/donationService';
 
+const LOCAL_SESSION_PROFILE_KEY = 'zarazarao_active_session_profile';
+
+const getStoredProfile = (): UserProfile | null => {
+  try {
+    const raw = localStorage.getItem(LOCAL_SESSION_PROFILE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.warn('LocalStorage session read error:', e);
+  }
+  return null;
+};
+
+const saveStoredProfile = (profile: UserProfile | null) => {
+  try {
+    if (profile) {
+      localStorage.setItem(LOCAL_SESSION_PROFILE_KEY, JSON.stringify(profile));
+    } else {
+      localStorage.removeItem(LOCAL_SESSION_PROFILE_KEY);
+    }
+  } catch (e) {
+    console.warn('LocalStorage session write error:', e);
+  }
+};
+
 interface AuthContextType {
   currentUser: FirebaseUser | null;
   userProfile: UserProfile | null;
@@ -45,9 +69,14 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(auth.currentUser);
+  const [userProfile, setUserProfileState] = useState<UserProfile | null>(() => getStoredProfile());
   const [loading, setLoading] = useState(true);
+
+  const setUserProfile = (profile: UserProfile | null) => {
+    setUserProfileState(profile);
+    saveStoredProfile(profile);
+  };
 
   // Sync profile from Firestore, importing all OAuth provider data (Google & Meta/Facebook)
   const syncProfile = async (user: FirebaseUser) => {
@@ -158,11 +187,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Synchronously listen to onAuthStateChanged so mobile app shell gets state right away
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!isMounted) return;
-      setCurrentUser(user);
       if (user) {
+        setCurrentUser(user);
         await syncProfile(user);
       } else {
-        setUserProfile(null);
+        const cached = getStoredProfile();
+        if (!cached) {
+          setCurrentUser(null);
+          setUserProfile(null);
+        }
       }
       setLoading(false);
     });
@@ -239,6 +272,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUpWithEmail = async (email: string, pass: string, name: string, city: string, phone: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    if (cred.user) {
+      setCurrentUser(cred.user);
+    }
     try {
       await updateProfile(cred.user, { displayName: name });
     } catch (e) {
@@ -289,7 +325,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
-    await signInWithEmailAndPassword(auth, email, pass);
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    if (cred.user) {
+      setCurrentUser(cred.user);
+      await syncProfile(cred.user);
+    }
   };
 
   const resetPassword = async (emailToReset: string) => {
@@ -310,6 +350,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     await fbSignOut(auth);
+    setCurrentUser(null);
     setUserProfile(null);
   };
 
@@ -361,7 +402,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Quick switch role for testing all platform perspectives
   const switchDemoRole = async (targetRole: 'donor' | 'beneficiary' | 'partner' | 'admin') => {
     if (!currentUser) {
-      // If not logged in, prompt sign in or sign in with test credentials
       return;
     }
     const roleMapping: Record<string, { role: UserRole; name: string; city: string; apples: number }> = {

@@ -16,6 +16,7 @@ import { HelpCenterPage } from '@/pages/HelpCenterPage';
 import { LegalPage } from '@/pages/LegalPage';
 import { CGUPage } from '@/pages/CGUPage';
 import { DataPrivacyPage } from '@/pages/DataPrivacyPage';
+import { DataDeletionRightsPage } from '@/pages/DataDeletionRightsPage';
 import { CookieConsentModal } from '@/components/common/CookieConsentModal';
 import { UserDashboardPage } from '@/pages/UserDashboardPage';
 import { MessagingPage } from '@/pages/MessagingPage';
@@ -231,6 +232,16 @@ function AppContent() {
 
         {currentPage === 'data-privacy' && (
           <DataPrivacyPage onNavigate={navigate} />
+        )}
+
+        {(currentPage === 'data-deletion' || currentPage === 'deletion-rights') && (
+          <DataDeletionRightsPage
+            onNavigate={navigate}
+            onOpenAuthModal={() => {
+              setAuthModalMode('signin');
+              setAuthModalOpen(true);
+            }}
+          />
         )}
 
         {currentPage === 'profile' && (

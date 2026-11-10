@@ -101,7 +101,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return 'L’adresse e-mail saisie n’est pas valide.';
     }
     if (code === 'auth/operation-not-allowed') {
-      return 'L’authentification avec ce fournisseur n’est pas encore activée dans la console Firebase.';
+      return 'L’authentification Facebook/Meta nécessite d’activer le fournisseur "Facebook" dans votre Console Firebase (Authentication > Sign-in method > Facebook > Saisir votre App ID Meta). Vous pouvez utiliser la connexion Google ou E-mail en attendant.';
     }
     if (code === 'auth/weak-password') {
       return 'Le mot de passe est trop faible (8 caractères minimum requis avec majuscule, chiffre et symbole).';
@@ -127,7 +127,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return message || 'Une erreur est survenue lors de l’opération.';
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setError(null);
     setLoading(true);
     try {
@@ -140,7 +144,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleFacebookSignIn = async () => {
+  const handleFacebookSignIn = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setError(null);
     setLoading(true);
     try {

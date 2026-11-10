@@ -6,7 +6,7 @@ interface DataPrivacyPageProps {
   onNavigate?: (page: string) => void;
 }
 
-export const DataPrivacyPage: React.FC<DataPrivacyPageProps> = () => {
+export const DataPrivacyPage: React.FC<DataPrivacyPageProps> = ({ onNavigate }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -163,6 +163,19 @@ export const DataPrivacyPage: React.FC<DataPrivacyPageProps> = () => {
           <p>
             Conformément aux principes du droit du numérique, vous disposez d'un droit d'accès complet à vos informations, de rectification en temps réel depuis l'onglet « Mon Profil », ainsi que d'un droit à l'oubli et à la suppression intégrale de vos données personnelles sur simple demande par e-mail ou téléphone.
           </p>
+          {onNavigate && (
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-2">
+              <span className="text-xs text-rose-900 font-semibold">
+                Consultez le document dédié détaillant la procédure complète de suppression et vos droits d'effacement (16 articles) :
+              </span>
+              <button
+                onClick={() => onNavigate('data-deletion')}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl shadow-sm transition-all cursor-pointer shrink-0"
+              >
+                Page Droits de Suppression →
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Paragraph 14 */}

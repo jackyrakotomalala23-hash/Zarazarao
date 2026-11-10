@@ -174,6 +174,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               Données Personnelles
             </button>
             <span>•</span>
+            <button onClick={() => onNavigate('data-deletion')} className="hover:text-rose-300 text-rose-200/90 transition-colors cursor-pointer font-bold">
+              🗑️ Droit de Suppression
+            </button>
+            <span>•</span>
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('reopen-cookie-consent'))} 
               className="hover:text-amber-300 text-emerald-200 transition-colors cursor-pointer"
