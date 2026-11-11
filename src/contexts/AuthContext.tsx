@@ -218,8 +218,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
       .catch((redirectError: any) => {
         if (!isMounted) return;
-        console.error('Redirect sign-in result error:', redirectError);
         const code = redirectError?.code;
+        // Argument error happens if no redirect operation is in flight; ignore gracefully
+        if (code === 'auth/argument-error') {
+          return;
+        }
+        console.error('Redirect sign-in result error:', redirectError);
         if (code === 'auth/account-exists-with-different-credential') {
           setRedirectAuthError(
             'Un compte Zarazarao existe déjà avec cette adresse e-mail. Pour des raisons de sécurité, connectez-vous avec Google ou votre mot de passe pour accéder à votre compte.'
@@ -243,24 +247,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const isMobileDevice = () => {
-    if (typeof window === 'undefined') return false;
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const isMobileUa = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-    return isMobileUa || isStandalone || (isTouch && window.innerWidth < 768);
-  };
-
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-
-    // On mobile devices and installed PWAs, window.opener is severed by Android OS across popup tabs
-    // signInWithRedirect combined with our same-origin reverse proxy provides 100% reliable login
-    if (isMobileDevice()) {
-      await signInWithRedirect(auth, provider);
-      return;
-    }
 
     try {
       const res = await signInWithPopup(auth, provider);
@@ -270,7 +259,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err: any) {
       console.warn('Google popup auth error:', err);
-      if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
+      if (err?.code === 'auth/popup-blocked') {
         await signInWithRedirect(auth, provider);
       } else {
         throw err;
@@ -284,12 +273,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     provider.addScope('public_profile');
     provider.setCustomParameters({ display: 'popup' });
 
-    // On mobile devices and installed PWAs, window.opener is severed by Android OS across popup tabs
-    if (isMobileDevice()) {
-      await signInWithRedirect(auth, provider);
-      return;
-    }
-
     try {
       const res = await signInWithPopup(auth, provider);
       if (res.user) {
@@ -298,7 +281,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err: any) {
       console.warn('Facebook popup auth error:', err);
-      if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
+      if (err?.code === 'auth/popup-blocked') {
         await signInWithRedirect(auth, provider);
       } else {
         throw err;
