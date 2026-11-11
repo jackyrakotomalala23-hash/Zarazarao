@@ -44,18 +44,15 @@ if (workbox) {
     })
   );
 
-  // Cache Firestore API requests and backend queries for donation list & user profile
+  // Explicitly bypass Service Worker for Firebase Auth (/__/*), API routes, and Google APIs
   workbox.routing.registerRoute(
-    ({url}) => url.origin.includes('firestore.googleapis.com') || url.pathname.includes('/api/'),
-    new workbox.strategies.NetworkFirst({
-      cacheName: 'zarazarao-firestore-cache',
-      plugins: [
-        new workbox.expiration.ExpirationPlugin({
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60, // 24 Hours
-        }),
-      ],
-    })
+    ({url, request}) => 
+      url.pathname.startsWith('/__/') || 
+      url.pathname.startsWith('/api/') || 
+      url.origin.includes('googleapis.com') || 
+      url.origin.includes('firebase') ||
+      request.method !== 'GET',
+    new workbox.strategies.NetworkOnly()
   );
 
 } else {

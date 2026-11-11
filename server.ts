@@ -1,4 +1,5 @@
 import express from 'express';
+import proxy from 'express-http-proxy';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import path from 'path';
@@ -8,6 +9,24 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
+app.set('trust proxy', true);
+
+// Same-Origin Reverse Proxy for Firebase Auth (/__/auth/*)
+// Eliminates third-party cookie blocking on mobile browsers (Android Chrome, iOS Safari) and installed PWAs
+app.use(
+  '/__/auth',
+  proxy('https://famous-house-hv4kj.firebaseapp.com', {
+    proxyReqPathResolver: (req) => `/__/auth${req.url}`,
+    proxyReqOptDecorator: (proxyReqOpts) => {
+      if (!proxyReqOpts.headers) {
+        proxyReqOpts.headers = {};
+      }
+      proxyReqOpts.headers['host'] = 'famous-house-hv4kj.firebaseapp.com';
+      return proxyReqOpts;
+    },
+  })
+);
 
 app.use(express.json());
 

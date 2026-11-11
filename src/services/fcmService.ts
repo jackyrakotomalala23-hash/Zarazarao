@@ -27,10 +27,10 @@ export const fcmService = {
         return null;
       }
 
-      // Register service worker
+      // Use active service worker without triggering disruptive lifecycle updates
       if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        console.log('Service Worker registered with scope:', registration.scope);
+        const registration = await navigator.serviceWorker.ready;
+        console.log('Service Worker ready for messaging:', registration.scope);
 
         // Get token
         // Note: Replace or provide a valid VAPID key if configured in Firebase Console -> Cloud Messaging -> Web Push certificates

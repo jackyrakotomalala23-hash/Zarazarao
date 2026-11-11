@@ -34,13 +34,21 @@ import { fcmService } from '@/services/fcmService';
 import { PWAInstallBanner } from '@/components/common/PWAInstallBanner';
 
 function AppContent() {
-  const { currentUser } = useAuth();
+  const { currentUser, redirectAuthError } = useAuth();
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [pageParams, setPageParams] = useState<any>({});
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot' | 'reset_confirm'>('signin');
   const [resetOobCode, setResetOobCode] = useState<string>('');
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Auto-open auth modal with detailed error message if a redirect error returned
+  useEffect(() => {
+    if (redirectAuthError) {
+      setAuthModalMode('signin');
+      setAuthModalOpen(true);
+    }
+  }, [redirectAuthError]);
 
   // Initialize seed data on initial launch and check for reset password URL params
   useEffect(() => {

@@ -53,6 +53,8 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   isPartner: boolean;
+  redirectAuthError: string | null;
+  clearRedirectAuthError: () => void;
   signInWithGoogle: () => Promise<void>;
   signInWithFacebook: () => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string, city: string, phone: string) => Promise<void>;
@@ -72,6 +74,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(auth.currentUser);
   const [userProfile, setUserProfileState] = useState<UserProfile | null>(() => getStoredProfile());
   const [loading, setLoading] = useState(true);
+  const [redirectAuthError, setRedirectAuthError] = useState<string | null>(null);
+
+  const clearRedirectAuthError = () => setRedirectAuthError(null);
 
   const setUserProfile = (profile: UserProfile | null) => {
     setUserProfileState(profile);
@@ -90,18 +95,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let providerEmail = user.email || '';
       let providerPhone = user.phoneNumber || '';
 
-      user.providerData.forEach((p) => {
-        if (!providerPhoto && p.photoURL) providerPhoto = p.photoURL;
-        if (!providerName && p.displayName) providerName = p.displayName;
-        if (!providerEmail && p.email) providerEmail = p.email;
-        if (!providerPhone && p.phoneNumber) providerPhone = p.phoneNumber;
-      });
+      if (user.providerData && Array.isArray(user.providerData)) {
+        user.providerData.forEach((p) => {
+          if (!providerPhoto && p.photoURL) providerPhoto = p.photoURL;
+          if (!providerName && p.displayName) providerName = p.displayName;
+          if (!providerEmail && p.email) providerEmail = p.email;
+          if (!providerPhone && p.phoneNumber) providerPhone = p.phoneNumber;
+        });
+      }
 
       if (snap.exists()) {
         const data = snap.data() as UserProfile;
         // Update photo or name if missing or placeholder
-        const needsPhotoUpdate = (!data.photoURL || data.photoURL.includes('dicebear')) && providerPhoto;
-        const needsNameUpdate = !data.displayName && providerName;
+        const needsPhotoUpdate = (!data.photoURL || data.photoURL.includes('dicebear')) && Boolean(providerPhoto);
+        const needsNameUpdate = !data.displayName && Boolean(providerName);
         
         if (needsPhotoUpdate || needsNameUpdate) {
           const updatedProfileData: Partial<UserProfile> = {
@@ -117,10 +124,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         // Initialize new user profile with 10 welcome points!
         const isBootstrapAdmin = providerEmail === 'jacky.rakotomalala23@gmail.com';
+        const fallbackName = providerName || (providerEmail ? providerEmail.split('@')[0] : '') || 'Membre Zarazarao';
         const newProfile: UserProfile = {
           uid: user.uid,
-          displayName: providerName || providerEmail.split('@')[0] || 'Membre Zarazarao',
-          photoURL: providerPhoto || `https://api.dicebear.com/7.x/initials/svg?seed=${providerName || 'ZZ'}`,
+          displayName: fallbackName,
+          photoURL: providerPhoto || `https://api.dicebear.com/7.x/initials/svg?seed=${fallbackName}`,
           city: 'Antananarivo',
           role: isBootstrapAdmin ? 'admin' : 'user',
           applesCount: 10,
@@ -140,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           // Private PII subcollection with email and phone from Facebook/Google
           await setDoc(doc(db, 'users', user.uid, 'private', 'info'), {
-            email: providerEmail,
+            email: providerEmail || '',
             phoneNumber: providerPhone || '',
             verifiedPhoneStatus: Boolean(providerPhone),
             verifiedEmailStatus: Boolean(providerEmail),
@@ -160,10 +168,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err) {
       console.error('Error syncing user profile:', err);
       // Fallback profile in memory
+      const fallbackName = user.displayName || (user.email ? user.email.split('@')[0] : '') || 'Membre Zarazarao';
       setUserProfile({
         uid: user.uid,
-        displayName: user.displayName || user.email?.split('@')[0] || 'Membre Zarazarao',
-        photoURL: user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=ZZ`,
+        displayName: fallbackName,
+        photoURL: user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${fallbackName}`,
         city: 'Antananarivo',
         role: user.email === 'jacky.rakotomalala23@gmail.com' ? 'admin' : 'user',
         applesCount: 10,
@@ -178,65 +187,90 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     let isMounted = true;
-    
-    // Immediately enforce persistence on boot
-    setPersistence(auth, browserLocalPersistence).catch((pErr) => {
-      console.warn('Set persistence warning:', pErr);
-    });
 
-    // Synchronously listen to onAuthStateChanged so mobile app shell gets state right away
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    // 1. Immediately subscribe to onAuthStateChanged so session is instantly detected on mount
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (!isMounted) return;
       if (user) {
         setCurrentUser(user);
-        await syncProfile(user);
-      } else {
-        const cached = getStoredProfile();
-        if (!cached) {
-          setCurrentUser(null);
-          setUserProfile(null);
+        try {
+          await syncProfile(user);
+        } catch (syncErr) {
+          console.warn('Sync profile warning on auth change:', syncErr);
         }
+      } else {
+        setCurrentUser(null);
+        setUserProfile(null);
       }
       setLoading(false);
     });
 
-    // Handle mobile redirect sign-in results asynchronously
+    // 2. Concurrently check redirect result from OAuth redirect flow
     getRedirectResult(auth)
       .then(async (redirectRes) => {
-        if (redirectRes?.user && isMounted) {
+        if (!isMounted) return;
+        if (redirectRes?.user) {
+          console.log('Redirect sign-in success for user:', redirectRes.user.uid);
           setCurrentUser(redirectRes.user);
           await syncProfile(redirectRes.user);
           setLoading(false);
         }
       })
-      .catch((error) => {
-        console.error('Redirect sign-in result error:', error);
+      .catch((redirectError: any) => {
+        if (!isMounted) return;
+        console.error('Redirect sign-in result error:', redirectError);
+        const code = redirectError?.code;
+        if (code === 'auth/account-exists-with-different-credential') {
+          setRedirectAuthError(
+            'Un compte Zarazarao existe déjà avec cette adresse e-mail. Pour des raisons de sécurité, connectez-vous avec Google ou votre mot de passe pour accéder à votre compte.'
+          );
+        } else if (code === 'auth/unauthorized-domain') {
+          setRedirectAuthError(
+            'Ce domaine d’application n’est pas encore autorisé dans votre console Firebase (Authentication > Paramètres > Domaines autorisés).'
+          );
+        } else if (code === 'auth/operation-not-allowed') {
+          setRedirectAuthError(
+            'La méthode de connexion sélectionnée n’est pas activée dans votre console Firebase (Authentication > Sign-in method).'
+          );
+        } else if (redirectError?.message) {
+          setRedirectAuthError(redirectError.message);
+        }
       });
 
     return () => {
       isMounted = false;
-      unsubscribe();
+      unsubscribeAuth();
     };
   }, []);
+
+  const isMobileDevice = () => {
+    if (typeof window === 'undefined') return false;
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isMobileUa = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    return isMobileUa || isStandalone || (isTouch && window.innerWidth < 768);
+  };
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
+    // On mobile devices and installed PWAs, window.opener is severed by Android OS across popup tabs
+    // signInWithRedirect combined with our same-origin reverse proxy provides 100% reliable login
+    if (isMobileDevice()) {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
+
     try {
-      await setPersistence(auth, browserLocalPersistence);
       const res = await signInWithPopup(auth, provider);
       if (res.user) {
         setCurrentUser(res.user);
         await syncProfile(res.user);
       }
     } catch (err: any) {
-      console.warn('Google popup auth failed or blocked, attempting redirect fallback:', err);
-      if (
-        err?.code === 'auth/popup-blocked' ||
-        err?.code === 'auth/popup-closed-by-user' ||
-        err?.code === 'auth/cancelled-popup-request'
-      ) {
+      console.warn('Google popup auth error:', err);
+      if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
         await signInWithRedirect(auth, provider);
       } else {
         throw err;
@@ -248,21 +282,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const provider = new FacebookAuthProvider();
     provider.addScope('email');
     provider.addScope('public_profile');
+    provider.setCustomParameters({ display: 'popup' });
+
+    // On mobile devices and installed PWAs, window.opener is severed by Android OS across popup tabs
+    if (isMobileDevice()) {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
 
     try {
-      await setPersistence(auth, browserLocalPersistence);
       const res = await signInWithPopup(auth, provider);
       if (res.user) {
         setCurrentUser(res.user);
         await syncProfile(res.user);
       }
     } catch (err: any) {
-      console.warn('Facebook popup auth failed or blocked, attempting redirect fallback:', err);
-      if (
-        err?.code === 'auth/popup-blocked' ||
-        err?.code === 'auth/popup-closed-by-user' ||
-        err?.code === 'auth/cancelled-popup-request'
-      ) {
+      console.warn('Facebook popup auth error:', err);
+      if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
         await signInWithRedirect(auth, provider);
       } else {
         throw err;
@@ -271,21 +307,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string, city: string, phone: string) => {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+    const cleanPhone = phone.trim();
+    const cred = await createUserWithEmailAndPassword(auth, cleanEmail, pass.trim());
     if (cred.user) {
       setCurrentUser(cred.user);
     }
     try {
-      await updateProfile(cred.user, { displayName: name });
+      await updateProfile(cred.user, { displayName: cleanName });
     } catch (e) {
       console.warn('Could not update auth profile display name:', e);
     }
     
-    const isBootstrapAdmin = email === 'jacky.rakotomalala23@gmail.com';
+    const isBootstrapAdmin = cleanEmail === 'jacky.rakotomalala23@gmail.com';
     const profile: UserProfile = {
       uid: cred.user.uid,
-      displayName: name,
-      photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${name}`,
+      displayName: cleanName,
+      photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${cleanName}`,
       city,
       role: isBootstrapAdmin ? 'admin' : 'user',
       applesCount: 10,
@@ -305,8 +344,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Private PII subcollection
       await setDoc(doc(db, 'users', cred.user.uid, 'private', 'info'), {
-        email,
-        phoneNumber: phone,
+        email: cleanEmail,
+        phoneNumber: cleanPhone,
         verifiedPhoneStatus: true,
         verifiedEmailStatus: true,
         address: city
@@ -325,10 +364,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
-    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    const cleanEmail = email.trim().toLowerCase();
+    const cred = await signInWithEmailAndPassword(auth, cleanEmail, pass.trim());
     if (cred.user) {
       setCurrentUser(cred.user);
-      await syncProfile(cred.user);
+      // Immediately set profile fallback so UI updates without waiting for network roundtrip
+      const fallbackName = cred.user.displayName || cleanEmail.split('@')[0] || 'Membre Zarazarao';
+      setUserProfile({
+        uid: cred.user.uid,
+        displayName: fallbackName,
+        photoURL: cred.user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${fallbackName}`,
+        city: 'Antananarivo',
+        role: cleanEmail === 'jacky.rakotomalala23@gmail.com' ? 'admin' : 'user',
+        applesCount: 10,
+        profileCompletionStatus: false,
+        signupBonusAwarded: true,
+        firstDonationBonusAwarded: false,
+        isVerified: false,
+        createdAt: new Date().toISOString()
+      });
+      try {
+        await syncProfile(cred.user);
+      } catch (syncErr) {
+        console.warn('Sync profile error on signin:', syncErr);
+      }
     }
   };
 
@@ -433,6 +492,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         isAdmin,
         isPartner,
+        redirectAuthError,
+        clearRedirectAuthError,
         signInWithGoogle,
         signInWithFacebook,
         signUpWithEmail,
